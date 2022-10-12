@@ -21,6 +21,9 @@ class InterfaceManager {
 
     createUI () {
 
+        document.body.style.margin = '0px'
+        document.body.style.overflow = 'hidden'
+
         const Element = document.createElement( 'ui' )
         Element.style.position = 'absolute'
         Element.style.left = '0px'

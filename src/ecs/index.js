@@ -1,3 +1,3 @@
 export * from './components'
-export { ECSComponent } from './ECSComponent.js'
-export { ECSEntity } from './ECSEntity.js'
+export { ECSComponent as Component } from './ECSComponent.js'
+export { ECSEntity as Entity } from './ECSEntity.js'

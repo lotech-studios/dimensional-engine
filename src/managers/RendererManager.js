@@ -51,15 +51,10 @@ class RendererManager {
 
     async buildRenderer ( name, scene, camera, params = {} ) {
 
-        console.log( scene )
-        console.log( camera )
-
         const RENDERER = new Renderer( this, scene, camera, params )
         RENDERER.append( document.body )
 
         this.Renderers.add( name, RENDERER )
-
-        console.log( this.Engine )
 
         this.Engine.Tools.RendererInterface.selectRenderer( name )
         this.Engine.Tools.RendererInterface.refreshRendererList()

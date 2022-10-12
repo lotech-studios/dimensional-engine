@@ -1,11 +1,16 @@
 {
   "name": "dimensional-engine",
   "version": "1.0.0",
-  "description": "An easy-to-use JS 3D engine.",
-  "main": "index.js",
-  "type": "module",
+  "description": "My webpack project",
+  "main": "./build/dimensional-engine.cjs.js",
+  "module": "./build/dimensional-engine.esm.js",
   "scripts": {
-    "rollup": "rollup --config rollup.config.js"
+    "rollup": "rollup --config rollup.config.js",
+    "webpack": "webpack --mode production -w",
+    "build": "webpack --mode=production --node-env=production",
+    "build:dev": "webpack --mode=development",
+    "build:prod": "webpack --mode=production --node-env=production",
+    "watch": "webpack --watch"
   },
   "repository": {
     "type": "git",
@@ -18,8 +23,17 @@
   },
   "homepage": "https://github.com/lotech-studios/dimensional-engine#readme",
   "devDependencies": {
+    "@babel/core": "^7.19.3",
+    "@babel/preset-env": "^7.19.4",
     "@rollup/plugin-node-resolve": "^15.0.0",
+    "@webpack-cli/generators": "^2.5.0",
+    "babel-loader": "^8.2.5",
+    "html-webpack-plugin": "^5.5.0",
     "rollup": "^3.0.0",
-    "three": "^0.145.0"
+    "sass": "^1.55.0",
+    "sass-loader": "^13.1.0",
+    "three": "^0.145.0",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0"
   }
 }

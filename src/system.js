@@ -1,13 +1,7 @@
-import * as MathUtils from './util/math.js'
-import * as ScriptUtils from './util/script.js'
+
 import * as THREE from 'three'
-
-// ECS imports
-
-import { ECSComponent } from './ecs/ECSComponent.js'
-import { ECSEntity } from './ecs/ECSEntity.js'
-
-import { CameraComponent } from './ecs/components/CameraComponent.js'
+import * as ECS from './ecs'
+import * as Utils from './util'
 
 // Manager imports
 
@@ -33,8 +27,8 @@ class EngineSystem {
         this.Clock = new THREE.Clock()
 
         this.Settings = {
-            animUpdateInterval: ScriptUtils.checkParam( params, 'animUpdateInterval', 60 ),
-            toolsShowing: ScriptUtils.checkParam( params, 'toolsShowing', false ),
+            animUpdateInterval: Utils.Script.checkParam( params, 'animUpdateInterval', 60 ),
+            toolsShowing: Utils.Script.checkParam( params, 'toolsShowing', false ),
         }
 
         this.Time = {
@@ -47,14 +41,7 @@ class EngineSystem {
 
         this.Three = THREE
 
-        this.ECS = {
-            Component: ECSComponent,
-            Entity: ECSEntity,
-
-            Components: {
-                Camera: CameraComponent,
-            },
-        }
+        this.ECS = ECS
 
         this.Managers = {
             Camera: new CameraManager(),
@@ -69,10 +56,7 @@ class EngineSystem {
             RendererInterface: new RenderInterfaceTool( this ),
         }
 
-        this.Utils = {
-            Math: MathUtils,
-            Script: ScriptUtils,
-        }
+        this.Utils = Utils
 
         // Render method
 

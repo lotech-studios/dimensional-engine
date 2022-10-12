@@ -12,6 +12,8 @@ class ComponentStorageTable extends ScriptUtils.StorageTable {
 
         await this.array[ this.array.length - 1 ].onBuild()
 
+        return this.array[ this.array.length - 1 ]
+
     }
 
     check ( name ) {
@@ -83,7 +85,7 @@ class ECSEntity {
 
         if ( cc.prototype.$isECSComponent ) {
 
-            await this.Components.add( cc, this, ...args )
+            return await this.Components.add( cc, this, ...args )
 
         }
 
@@ -142,6 +144,12 @@ class ECSEntity {
             await this.Components.remove( name )
 
         }
+
+    }
+
+    setName ( name ) {
+
+        this.name = name
 
     }
 

@@ -1,4 +1,4 @@
-export * as ArrayUtils from './arrays.js'
-export * as MathUtils from './math.js'
-export * as RendererUtils from './renderers.js'
-export * as ScriptUtils from './script.js'
+export * as Array from './arrays.js'
+export * as Math from './math.js'
+export * as Renderer from './renderers.js'
+export * as Script from './script.js'
