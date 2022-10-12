@@ -1,7 +1,7 @@
 {
   "name": "dimensional-engine",
-  "version": "1.0.0",
-  "description": "My webpack project",
+  "version": "0.2.1",
+  "description": "An easy-to-use (Entity Component System) JavaScript 3D game engine based on Three.js",
   "main": "./build/dimensional-engine.cjs.js",
   "module": "./build/dimensional-engine.esm.js",
   "scripts": {
