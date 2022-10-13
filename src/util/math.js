@@ -23,3 +23,11 @@ export function generateUUID () {
 	return uuid.toLowerCase()
 
 }
+
+export function random ( min, max ) {
+
+	if ( min && !max ) return Math.random() * ( min - 0 + 1 ) + 0
+	else if ( min && max ) return Math.random() * ( max - min + 1 ) + min
+	else return Math.random()
+
+}
