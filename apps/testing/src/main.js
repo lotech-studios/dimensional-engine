@@ -21,9 +21,9 @@ const BG_COLOR = new Dimensional.Three.Color(
     SETTINGS.RAND_COLOR.b / 8 
 )
 
-const CUBE_GEOMETRY = new ENGINE.Three.IcosahedronGeometry( SETTINGS.CUBESIZE, 0 )
-const MATERIAL_NORMAL = new ENGINE.Three.MeshNormalMaterial()
-const MATERIAL_COLORED = new ENGINE.Three.MeshPhongMaterial( { color: SETTINGS.RAND_COLOR } )
+const CUBE_GEOMETRY = new Dimensional.Three.IcosahedronGeometry( SETTINGS.CUBESIZE, 0 )
+const MATERIAL_NORMAL = new Dimensional.Three.MeshNormalMaterial()
+const MATERIAL_COLORED = new Dimensional.Three.MeshPhongMaterial( { color: SETTINGS.RAND_COLOR } )
 const TESTING = false
 
 /**
@@ -38,11 +38,11 @@ class MeshBoxComponent extends ENGINE.ECS.Component {
 
         super( proxy )
 
-        this.Group = new ENGINE.Three.Group()
+        this.Group = new Dimensional.Three.Group()
         this.Material = material
-        this.Position = new ENGINE.Three.Vector3()
+        this.Position = new Dimensional.Three.Vector3()
 
-        this.Range = new ENGINE.Three.Vector3(
+        this.Range = new Dimensional.Three.Vector3(
             Dimensional.Utils.Math.random( 2, 4 ),
             Dimensional.Utils.Math.random( 2, 4 ),
             Dimensional.Utils.Math.random( 2, 4 )
@@ -146,7 +146,7 @@ ENGINE.Managers.ECS.createAssembly( 'Mesh Box', async ( e, material, scene ) => 
 
 ENGINE.onStart = async () => {
 
-    // Build scene
+    // Build scenes
 
     const SCENE1 = await ENGINE.Managers.Scene.buildScene( 'Main', { 
         background: BG_COLOR
@@ -159,11 +159,11 @@ ENGINE.onStart = async () => {
     // Assemble entities
 
     await ENGINE.Managers.ECS.assemble( 'Camera', {
-        position: new ENGINE.Three.Vector3( 0, SETTINGS.CUBEY * SETTINGS.CAMERA_ZOOM_OUT_MULT * 10, 0 )
+        position: new Dimensional.Three.Vector3( 0, SETTINGS.CUBEY * SETTINGS.CAMERA_ZOOM_OUT_MULT * 10, 0 )
     } )
 
     const CAMERA = await ENGINE.Managers.ECS.assemble( 'Camera', {
-        position: new ENGINE.Three.Vector3(
+        position: new Dimensional.Three.Vector3(
             SETTINGS.CUBEX * SETTINGS.CAMERA_ZOOM_OUT_MULT, 
             SETTINGS.CUBEY * SETTINGS.CAMERA_ZOOM_OUT_MULT,
             SETTINGS.CUBEZ * SETTINGS.CAMERA_ZOOM_OUT_MULT 
@@ -175,7 +175,7 @@ ENGINE.onStart = async () => {
 
     await ENGINE.Managers.ECS.assemble( 'Light', {
         parent: SCENE2,
-        position: new ENGINE.Three.Vector3( 100, 100, 100 ),
+        position: new Dimensional.Three.Vector3( 100, 100, 100 ),
     } )
 
     // Build renderer and activate it
