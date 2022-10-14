@@ -88,7 +88,15 @@ export class StorageTable {
 
 export function checkParam ( object, name, defaultValue ) {
 
-    return object[ name ] ? object[ name ] : defaultValue
+    if ( typeof object[ name ] == 'boolean' ) {
+
+        return object[ name ] === true ? true : false
+
+    } else {
+
+        return object[ name ] ? object[ name ] : defaultValue
+
+    }
 
 }
 

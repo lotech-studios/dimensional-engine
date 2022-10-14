@@ -26,7 +26,7 @@ class RenderInterfaceTool extends InterfaceTool {
         }
 
         this.createElements()
-        this.hide()
+        // this.hide()
 
     }
 
@@ -229,7 +229,8 @@ class RenderInterfaceTool extends InterfaceTool {
         this.createAttribute( 'Mem', 'Memory Usage', 'MB', 'magenta' )
         this.createAttribute( 'MS', 'Latency', 'MS', 'limegreen' )
 
-        this.Engine.Managers.Interface.Elements.Main.appendChild( this.Elements.Main )
+        this.Engine.Managers.Interface.getState( 'Dev' ).byName()
+            .appendChild( this.Elements.Main )
 
     }
 
@@ -441,13 +442,15 @@ class RenderInterfaceTool extends InterfaceTool {
 
                 if ( this.Selected.Renderer ) {
 
-                    this.Attributes[ 'DrawCalls' ].update( this.Selected.Renderer.Renderer.info.render.calls )
-                    this.Attributes[ 'Poly' ].update( this.Selected.Renderer.Renderer.info.render.triangles )
-                    this.Attributes[ 'Points' ].update( this.Selected.Renderer.Renderer.info.render.points )
-                    this.Attributes[ 'Lines' ].update( this.Selected.Renderer.Renderer.info.render.lines )
+                    const INFO_PROPERTY = this.Selected.Renderer.useWebGPU ? '_info' : 'info'
 
-                    this.Attributes[ 'Geometries' ].update( this.Selected.Renderer.Renderer.info.memory.geometries )
-                    this.Attributes[ 'Textures' ].update( this.Selected.Renderer.Renderer.info.memory.textures )
+                    this.Attributes[ 'DrawCalls' ].update( this.Selected.Renderer.Renderer[ INFO_PROPERTY ].render.calls )
+                    this.Attributes[ 'Poly' ].update( this.Selected.Renderer.Renderer[ INFO_PROPERTY ].render.triangles )
+                    this.Attributes[ 'Points' ].update( this.Selected.Renderer.Renderer[ INFO_PROPERTY ].render.points )
+                    this.Attributes[ 'Lines' ].update( this.Selected.Renderer.Renderer[ INFO_PROPERTY ].render.lines )
+
+                    this.Attributes[ 'Geometries' ].update( this.Selected.Renderer.Renderer[ INFO_PROPERTY ].memory.geometries )
+                    this.Attributes[ 'Textures' ].update( this.Selected.Renderer.Renderer[ INFO_PROPERTY ].memory.textures )
 
                 }
 

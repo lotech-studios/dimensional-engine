@@ -52,7 +52,8 @@ class RendererManager {
     async buildRenderer ( name, scene, camera, params = {} ) {
 
         const RENDERER = new Renderer( this, scene, camera, params )
-        RENDERER.append( document.body )
+        
+        await RENDERER.onBuild()
 
         this.Renderers.add( name, RENDERER )
 

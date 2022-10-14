@@ -34,6 +34,39 @@ class DirectionalLightComponent extends ECS.Component {
 
     }
 
+    async onRemoval () {
+
+        this.removeFromParent()
+
+    }
+
+    removeFromParent () {
+
+        if ( this.Parent ) this.Parent.remove( this.Light )
+
+    }
+
+    setColor ( color = 0xffffff ) {
+
+        if ( color instanceof THREE.Color ) this.color = color
+        else this.color = new THREE.Color( color )
+
+    }
+
+    setIntensity ( intensity ) {
+
+        this.intensity = intensity
+
+    }
+
+    setParent ( parent ) {
+
+        if ( this.Parent ) this.Parent.remove( this.Light )
+
+        this.addTo( parent )
+
+    }
+
 }
 
 DirectionalLightComponent.prototype.$name = 'DirectionalLight'

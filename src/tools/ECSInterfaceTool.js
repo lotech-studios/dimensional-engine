@@ -7,7 +7,7 @@ class ECSInterfaceTool extends InterfaceTool {
         super( engine )
 
         this.createElements()
-        this.hide()
+        // this.hide()
 
     }
 
@@ -43,7 +43,8 @@ class ECSInterfaceTool extends InterfaceTool {
 
         this.Elements.Main.appendChild( this.Elements.EntityList )
 
-        this.Engine.Managers.Interface.Elements.Main.appendChild( this.Elements.Main )
+        this.Engine.Managers.Interface.getState( 'Dev' ).byName()
+            .appendChild( this.Elements.Main )
 
     }
 

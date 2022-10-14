@@ -3,6 +3,8 @@ import * as THREE from 'three'
 import * as ECS from './ecs'
 import * as Utils from './util'
 
+import * as ThreeNodes from 'three/examples/jsm/nodes/Nodes.js'
+
 // Manager imports
 
 import { ECSManager } from './managers/ECSManager.js'
@@ -28,7 +30,7 @@ class EngineSystem {
 
         this.Settings = {
             animUpdateInterval: Utils.Script.checkParam( params, 'animUpdateInterval', 60 ),
-            toolsShowing: Utils.Script.checkParam( params, 'toolsShowing', false ),
+            devToolsShowing: Utils.Script.checkParam( params, 'devToolsShowing', false ),
         }
 
         this.Time = {
@@ -58,6 +60,8 @@ class EngineSystem {
 
         this.Utils = Utils
 
+        this.ThreeNodes = ThreeNodes
+
         // Render method
 
         this.render = () => {
@@ -75,6 +79,8 @@ class EngineSystem {
                     this.updateAnim = true
     
                 }
+
+                this.onRender()
 
                 // Update ECS process
     
@@ -99,6 +105,7 @@ class EngineSystem {
     }
 
     async onStart ( engine = this ) { /** Stuff goes here */ }
+    onRender () {}
 
     async buildEvents () {
 
@@ -126,25 +133,17 @@ class EngineSystem {
 
     toggleTools () {
 
-        if ( this.Settings.toolsShowing ) {
+        if ( this.Settings.devToolsShowing ) {
 
-            for ( const t in this.Tools ) {
+            this.Managers.Interface.getState( 'Dev' ).byName().hide()
 
-                if ( t.includes( 'Interface' ) ) this.Tools[ t ].hide()
-
-            }
-
-            this.Settings.toolsShowing = false
+            this.Settings.devToolsShowing = false
 
         } else {
 
-            for ( const t in this.Tools ) {
+            this.Managers.Interface.getState( 'Dev' ).byName().show()
 
-                if ( t.includes( 'Interface' ) ) this.Tools[ t ].show()
-
-            }
-
-            this.Settings.toolsShowing = true
+            this.Settings.devToolsShowing = true
         }
 
     }

@@ -1,5 +1,6 @@
 import * as ScriptUtils from '../util/script.js'
 import * as THREE from '../../node_modules/three/build/three.module.js'
+import WebGPURenderer from '../../node_modules/three/examples/jsm/renderers/webgpu/WebGPURenderer.js'
 import { Vector2 } from '../math/Vector2.js'
 
 class Renderer {
@@ -7,6 +8,11 @@ class Renderer {
     constructor ( manager, scene, camera, params = {} ) {
 
         // Argument based variables
+
+        this.active = ScriptUtils.checkParam( params, 'active', true )
+        this.useWebGPU = ScriptUtils.checkParam( params, 'active', false )  
+        this.name = ScriptUtils.checkParam( params, 'name', `renderer#${ Renderer.prototype.$num }` )
+        this.pointerEvents = ScriptUtils.checkParam( params, 'pointerEvents', 'all' )
 
         this.Manager = manager
 
@@ -43,15 +49,34 @@ class Renderer {
         this.Materials.Depth.depthPacking = THREE.RGBADepthPacking
         this.Materials.Depth.blending = THREE.NoBlending 
 
+        // Update renderer count
+
+        Renderer.prototype.$num++
+
+    }
+
+    async addDepthBasedPass ( pc, ...pcArgs ) {
+
+        this.dbp.push( new pc( this, ...pcArgs ) )
+
+    }
+
+    append ( element ) {
+
+        element.appendChild( this.Renderer.domElement )
+
+    }
+
+    async onBuild () {
+
         // Initialize renderer
 
-        this.Renderer = new THREE.WebGLRenderer()
-        this.Renderer.active = ScriptUtils.checkParam( params, 'active', true )
-        this.Renderer.name = ScriptUtils.checkParam( params, 'name', `renderer#${ Renderer.prototype.$num }` )
-        this.Renderer.domElement.style.pointerEvents = ScriptUtils.checkParam( params, 'pointerEvents', 'all' )
-        this.Renderer.shadowMap.enabled = ScriptUtils.checkParam( params, 'enableShadows', true )
-        this.Renderer.shadowMap.type = ScriptUtils.checkParam( params, 'shadowMapType', THREE.BasicShadowMap )
-
+        this.Renderer = this.useWebGPU ? new WebGPURenderer() : new THREE.WebGLRenderer()
+        this.Renderer.setPixelRatio( window.devicePixelRatio )
+        this.Renderer.active = this.active
+        this.Renderer.name = this.name
+        this.Renderer.domElement.style.pointerEvents = this.pointerEvents
+        
         // Sizing and targets
 
         const PXLRATIO = this.Renderer.getPixelRatio()
@@ -69,22 +94,11 @@ class Renderer {
         }
 
         this.resize()
+        
+        this.Manager.Engine.Managers.Interface.getState( 'Rendering' ).byName()
+            .appendChild( this.Renderer.domElement )
 
-        // Update renderer count
-
-        Renderer.prototype.$num++
-
-    }
-
-    async addDepthBasedPass ( pc, ...pcArgs ) {
-
-        this.dbp.push( new pc( this, ...pcArgs ) )
-
-    }
-
-    append ( element ) {
-
-        element.appendChild( this.Renderer.domElement )
+        if ( this.useWebGPU ) return this.Renderer.init()
 
     }
 

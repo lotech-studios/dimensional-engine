@@ -9,10 +9,12 @@ class SceneManager {
 
     }
 
-    async buildScene ( name ) {
+    async buildScene ( name, properties = {} ) {
 
         const SCENE = new THREE.Scene()
         SCENE.name = name
+
+        for ( const p in properties ) SCENE[ p ] = properties[ p ]
 
         this.Scenes.add( SCENE )
 

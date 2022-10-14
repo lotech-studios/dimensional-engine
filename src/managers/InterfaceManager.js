@@ -1,21 +1,40 @@
+import * as Utils from '../util'
+
 class InterfaceManager {
 
     constructor () {
 
+        // non-nested variables
+
+        this.renderOrder = []
+
         this.Elements = {
-            Main: this.createUI()
+            Main: this.createUI(),
+
+            States: {},
         }
 
-        this.createElements( `
-            <div id='ass' sex>
-                <div></div>
-                <div></div>
-            </div>
-            <div id='dick'>
-                <div></div>
-                <div></div>
-            </div>
-        ` )
+        // storage Tables
+
+        this.States = Utils.Script.createStorageTable()
+
+        // init 
+
+        this.buildState( 'Rendering' )
+        this.buildState( 'Interface' )
+        this.buildState( 'Dev', { displayed: false } )
+
+    }
+
+    async buildState ( name, params = {} ) {
+
+        const STATE = new Utils.Interface.createState( this, name, params )
+
+        this.States.add( STATE )
+
+        this.Elements.States[ STATE.getUUID() ] = STATE.getElement()
+
+        return STATE
 
     }
 
@@ -40,10 +59,48 @@ class InterfaceManager {
 
     createElements ( html, parent ) {
 
-        const PARENT = parent ? parent : this.Elements.Main
+        switch ( typeof parent ) {
+
+            case 'undefined':
+
+                parent = this.Elements.Main
+
+                break
+
+            case 'string':
+
+                if ( parent.includes( 'state:' ) ) {
+
+                    if ( parent.includes( 'state:uuid@' ) ) {
+
+                        return this.States.get( parent.replace( 'state:uuid@' ) )
+                            .byUUID().getElement()
+
+                    }
+
+                    if ( parent.includes( 'state:name@' ) ) {
+
+                        return this.States.get( parent.replace( 'state:name@' ) )
+                            .byName().getElement()
+
+                    }
+
+                }
+
+                break
+
+        }
+
+        const PARENT = parent
         const ELEMENTS = new DOMParser().parseFromString( html, 'text/html' )
         
         ELEMENTS.body.childNodes.forEach( ( child ) => PARENT.appendChild( child ) )
+
+    }
+
+    getState ( value ) {
+
+        return this.States.get( value )
 
     }
 

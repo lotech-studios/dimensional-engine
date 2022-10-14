@@ -1,22 +1,29 @@
-import * as Dimensional from '../../../build/dimensional-engine.esm.js'
+import * as Dimensional from 'dimensional-engine'
 
 // Define engine constant
 
-const ENGINE = new Dimensional.System()
+const ENGINE = new Dimensional.System( { animUpdateInterval: 75 } )
 
 // Some constants need for this program
 
 const SETTINGS = {
-    CAMERA_ZOOM_OUT_MULT: 5,
-    CUBESIZE: 1,
+    CAMERA_ZOOM_OUT_MULT: 0.5,
+    CUBESIZE: 0.1,
     CUBEX: 9,
     CUBEY: 9,
     CUBEZ: 9,
+    RAND_COLOR: Dimensional.Utils.Math.randomThreeColor(),
 }
 
-const CUBE_GEOMETRY = new ENGINE.Three.BoxGeometry( SETTINGS.CUBESIZE, SETTINGS.CUBESIZE, SETTINGS.CUBESIZE )
+const BG_COLOR = new Dimensional.Three.Color( 
+    SETTINGS.RAND_COLOR.r / 8, 
+    SETTINGS.RAND_COLOR.g / 8, 
+    SETTINGS.RAND_COLOR.b / 8 
+)
+
+const CUBE_GEOMETRY = new ENGINE.Three.IcosahedronGeometry( SETTINGS.CUBESIZE, 0 )
 const MATERIAL_NORMAL = new ENGINE.Three.MeshNormalMaterial()
-const MATERIAL_COLORED = new ENGINE.Three.MeshPhongMaterial( { color: Math.random() * 0xffffff } )
+const MATERIAL_COLORED = new ENGINE.Three.MeshPhongMaterial( { color: SETTINGS.RAND_COLOR } )
 const TESTING = false
 
 /**
@@ -47,11 +54,22 @@ class MeshBoxComponent extends ENGINE.ECS.Component {
 
     async onBuild () {
 
-        for ( let z = -SETTINGS.CUBEZ; z < SETTINGS.CUBEZ; z += SETTINGS.CUBESIZE * 2 ) {
+        for ( 
+            let z = -SETTINGS.CUBEZ * SETTINGS.CUBESIZE; 
+            z < SETTINGS.CUBEZ * SETTINGS.CUBESIZE; 
+            z += SETTINGS.CUBESIZE * 2 
+        ) {
 
-            for ( let y = -SETTINGS.CUBEY; y < SETTINGS.CUBEY; y += SETTINGS.CUBESIZE * 2 ) {
+            for ( 
+                let y = -SETTINGS.CUBEY * SETTINGS.CUBESIZE; 
+                y < SETTINGS.CUBEY * SETTINGS.CUBESIZE; 
+                y += SETTINGS.CUBESIZE * 2 ) {
 
-                for ( let x = -SETTINGS.CUBEX; x < SETTINGS.CUBEX; x += SETTINGS.CUBESIZE * 2 ) {
+                for ( 
+                    let x = -SETTINGS.CUBEX * SETTINGS.CUBESIZE; 
+                    x < SETTINGS.CUBEX * SETTINGS.CUBESIZE; 
+                    x += SETTINGS.CUBESIZE * 2 
+                ) {
 
                     this.Position.set( x, y, z )
 
@@ -130,8 +148,13 @@ ENGINE.onStart = async () => {
 
     // Build scene
 
-    const SCENE1 = await ENGINE.Managers.Scene.buildScene( 'Main' )
-    const SCENE2 = await ENGINE.Managers.Scene.buildScene( 'Colored' )
+    const SCENE1 = await ENGINE.Managers.Scene.buildScene( 'Main', { 
+        background: BG_COLOR
+    } )
+
+    const SCENE2 = await ENGINE.Managers.Scene.buildScene( 'Colored', { 
+        background: BG_COLOR
+    } )
 
     // Assemble entities
 

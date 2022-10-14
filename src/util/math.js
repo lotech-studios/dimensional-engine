@@ -1,4 +1,5 @@
 import * as DB from '../database'
+import * as THREE from 'three'
 
 export function bob ( eT, mult, offset ) {
 
@@ -29,5 +30,17 @@ export function random ( min, max ) {
 	if ( min && !max ) return Math.random() * ( min - 0 + 1 ) + 0
 	else if ( min && max ) return Math.random() * ( max - min + 1 ) + min
 	else return Math.random()
+
+}
+
+export function randomColor () {
+
+	return Math.random() * 0xffffff
+
+}
+
+export function randomThreeColor () {
+
+	return new THREE.Color( randomColor() )
 
 }
