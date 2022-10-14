@@ -27,9 +27,9 @@ const MATERIAL_COLORED = new ENGINE.Three.MeshPhongMaterial( { color: SETTINGS.R
 const TESTING = false
 
 /**
- * Here we create our custom component. It will be a 9*9*9 grid of cube-shaped
- * meshes, giving us 729 draw calls per frame. Most low-end modern computers 
- * allow for this amount of draw calls before dipping below 60 FPS.
+ * Here we create our custom component. It will be a 9*9*9 grid of 
+ * icosahedron-shaped meshes, giving us 729 draw calls per frame. Most modern
+ * low-end computers allow for this amount of draw calls before dipping below 60 FPS.
  */
 
 class MeshBoxComponent extends ENGINE.ECS.Component {
