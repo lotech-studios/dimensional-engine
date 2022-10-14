@@ -36,7 +36,7 @@ Keep in mind, the engine is built on ES6 and Node modules.
 - Allows for dynamic building and updating components.
 - Components can update either frame-based or interval-based (seperate and simultaneously).
 - Everything built with the engine gets stored in the engine, allowing for easy and automatic access.
-- Unless it is disabled, by pressing the **F9** key, you can access many tools/interfaces for managing and view the data of your program or game.
+- Unless it is disabled, by pressing the **F9** key, you can access many tools/interfaces for managing and viewing the data of your program or game.
 - Everything is designed to be built asynchronously, allowing for smooth error-less loading and creation.
 
 #### Example
