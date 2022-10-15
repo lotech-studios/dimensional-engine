@@ -1,4 +1,6 @@
 export { CameraComponent } from './CameraComponent.js'
 export { DirectionalLightComponent } from './DirectionalLightComponent.js'
+export { InstancedMeshComponent } from './InstancedMeshComponent.js'
+export { InstancedMeshBoxComponent } from './InstanceMeshBoxComponent.js'
 export { MeshComponent } from './MeshComponent.js'
 export { RandomRotateMeshComponent } from './RandomRotateMeshComponent.js'

@@ -1,6 +1,6 @@
 import * as ScriptUtils from '../util/script.js'
 import * as THREE from '../../node_modules/three/build/three.module.js'
-import WebGPURenderer from '../../node_modules/three/examples/jsm/renderers/webgpu/WebGPURenderer.js'
+// import WebGPURenderer from '../../node_modules/three/examples/jsm/renderers/webgpu/WebGPURenderer.js'
 import { Vector2 } from '../math/Vector2.js'
 
 class Renderer {
