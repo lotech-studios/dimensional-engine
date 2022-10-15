@@ -1,6 +1,6 @@
 {
   "name": "dimensional-engine",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "An easy-to-use (Entity Component System) JavaScript 3D game engine based on Three.js",
   "main": "./build/dimensional-engine.cjs.js",
   "module": "./build/dimensional-engine.esm.js",
