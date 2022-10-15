@@ -2,16 +2,16 @@ import * as Dimensional from 'dimensional-engine'
 
 // Define engine constant
 
-const ENGINE = new Dimensional.System( { animUpdateInterval: 75 } )
+const ENGINE = new Dimensional.System( { animUpdateInterval: 60 } )
 
 // Some constants need for this program
 
 const SETTINGS = {
     CAMERA_ZOOM_OUT_MULT: 0.5,
     CUBESIZE: 0.1,
-    CUBEX: 9,
-    CUBEY: 9,
-    CUBEZ: 9,
+    CUBEX: 10,
+    CUBEY: 10,
+    CUBEZ: 10,
     RAND_COLOR: Dimensional.Utils.Math.randomThreeColor(),
 }
 
