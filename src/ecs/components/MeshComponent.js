@@ -1,19 +1,15 @@
 import * as THREE from 'three'
-import { ECSComponent } from '../ECSComponent.js'
+import { ThreeObjectComponent } from './ThreeObjectComponent.js'
 
-class MeshComponent extends ECSComponent {
+class MeshComponent extends ThreeObjectComponent {
 
     constructor ( proxy, geometry, material ) {
 
         super( proxy )
 
+        this.objVar = 'Mesh'
+
         this.Mesh = new THREE.Mesh( geometry, material )
-
-    }
-
-    addTo ( object3D ) {
-
-        object3D.add( this.Mesh )
 
     }
 
@@ -29,18 +25,6 @@ class MeshComponent extends ECSComponent {
 
     }
 
-    getMesh () {
-
-        return this.Mesh
-
-    }
-
-    async onRemoval () {
-
-        if ( this.Mesh.parent ) this.Mesh.parent.remove ( this.Mesh )
-
-    }
-
     setGeometry ( geometry ) {
 
         this.Mesh.geometry = geometry
@@ -50,12 +34,6 @@ class MeshComponent extends ECSComponent {
     setMaterial ( material ) {
 
         this.Mesh.material = material
-
-    }
-
-    setMesh ( mesh ) {
-
-        this.Mesh = mesh
 
     }
 

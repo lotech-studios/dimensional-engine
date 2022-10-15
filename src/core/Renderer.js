@@ -156,6 +156,7 @@ class Renderer {
 
         this.Camera.aspect = SIZEX / SIZEY
         this.Camera.updateProjectionMatrix()
+        this.Camera.helper.update()
 
     }
 

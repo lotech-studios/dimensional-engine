@@ -8,7 +8,9 @@ class RandomRotateMeshComponent extends ECSComponent {
 
         super( proxy )
 
-        this.Mesh = this.Proxy.getComponent( 'Mesh' ).getMesh()
+        this.range = range
+
+        this.Mesh = this.Proxy.getComponent( 'Mesh' ).get()
         this.Range = new THREE.Vector3(
             Utils.Math.random( -this.range, this.range ),
             Utils.Math.random( -this.range, this.range ),

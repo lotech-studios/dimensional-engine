@@ -1,8 +1,8 @@
-import * as ECS from '../'
 import * as THREE from 'three'
 import * as Utils from '../../util'
+import { ECSComponent } from '../ECSComponent.js'
 
-class DirectionalLightComponent extends ECS.Component {
+class DirectionalLightComponent extends ECSComponent {
 
     constructor ( proxy, params = {} ) {
 
