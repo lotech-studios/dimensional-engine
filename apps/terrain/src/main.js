@@ -32,14 +32,23 @@ ENGINE.Managers.ECS.createAssembly( 'Light', async ( e, params ) => {
 ENGINE.Managers.ECS.createAssembly( 'Terrain', async ( e ) => {
 
     e.setName( 'Terrain' )
-
-    const GEO = new Dimensional.Geometries.TerrainPlaneGeometry( 1, 1, 32, 32 )
-    const MAT = new Dimensional.Three.MeshBasicMaterial( { color: 0xff00ff, wireframe: true } )
     
-    await e.addComponent( Dimensional.ECS.MeshComponent, GEO, MAT )
+    await e.addComponent( 
+        ENGINE.ECS.TerrainComponent, 
+        ENGINE.Managers.Scene.get( 'Main' ),
+        {
+            chunkSimplexAmp: 0.75,
+            chunkSimplexRangeX: 0.125,
+            chunkSimplexRangeY: 0.125,
 
-    const MESH_COMP = e.getComponent( 'Mesh' )
-    MESH_COMP.setParent( ENGINE.Managers.Scene.get( 'Main' ) )
+            peakAmp: 4,
+            peakStartHeight: 0.125,
+
+            seaLevel: 0.5,
+        }
+    )
+
+    await e.getComponent( 'Terrain' ).generate()
 
 } )
 

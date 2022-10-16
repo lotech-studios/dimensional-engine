@@ -61,7 +61,12 @@ class LinkedVertex {
 
 class TerrainPlaneGeometry extends THREE.BufferGeometry {
 
-	constructor ( width = 1, height = 1, widthSegments = 1, heightSegments = 1 ) {
+	constructor ( 
+        width = 1, height = 1, widthSegments = 1, heightSegments = 1,
+        simplex, simplexSX, simplexSY, simplexRX, simplexRY, simplexAmp,
+        peakAmp, peakStartHeight,
+        seaLevel
+    ) {
 
 		super()
 
@@ -82,6 +87,12 @@ class TerrainPlaneGeometry extends THREE.BufferGeometry {
         let xList = []
         let yList = []
 
+        let simAmp = simplexAmp
+        let simRX = simplexRX
+        let simRY = simplexRY
+        let simSX = simplexSX
+        let simSY = simplexSY
+
         const XY = {}
 
 		const width_half = width / 2
@@ -95,6 +106,9 @@ class TerrainPlaneGeometry extends THREE.BufferGeometry {
 
 		const segment_width = width / gridX
 		const segment_height = height / gridY
+
+        const simDivX = simRX / gridX
+        const simDivY = simRY / gridY
 
 		//
 
@@ -112,7 +126,18 @@ class TerrainPlaneGeometry extends THREE.BufferGeometry {
 				const x = ix * segment_width - width_half
                 const ny = - y
 
-				vertices.push( x, - y, 0 )
+                const rX = ( simSX * simRX ) + ( ix * simDivX )
+                const rY = ( simSY * simRY ) + ( iy * simDivY )
+
+                let height = ( Utils.Noise.simplexOctave( simplex, rX, rY, 16 ) - seaLevel ) * simAmp
+
+                if ( height >= peakStartHeight ) {
+
+                    height = height + ( peakAmp * ( height - peakStartHeight ) )
+
+                }
+
+				vertices.push( x, - y, height )
 
                 const tx = Number( x.toFixed( 4 ) )
                 const ty = Number( ny.toFixed( 4 ) )
