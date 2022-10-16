@@ -1,5 +1,6 @@
 export * as Array from './arrays.js'
 export * as Interface from './interface.js'
+export * as Materials from './materials.js'
 export * as Math from './math.js'
 export * as Renderer from './renderers.js'
 export * as Script from './script.js'

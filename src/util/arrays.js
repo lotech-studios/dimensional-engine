@@ -29,3 +29,15 @@ export function removeValue ( array, value, iterations = 'once' ) {
     }
 
 }
+
+export function sortHighestToLowest ( array ) {
+
+    return array.sort( ( a, b ) => b - a )
+
+}
+
+export function sortLowestToHighest ( array ) {
+
+    return array.sort( ( a, b ) => a - b )
+
+}

@@ -8,14 +8,14 @@ class MaterialManager {
 
     }
 
+    async buildMaterial ( name ) {}
+
     async loadFromJSON ( file ) {
 
         const RESPONSE = await fetch( file )
         const DATA = await RESPONSE.json()
 
         for ( const m in DATA ) {
-
-            
 
             this.Materials.add()
 

@@ -1,4 +1,5 @@
 import * as Dimensional from 'dimensional-engine'
+import * as Settings from './settings.js'
 
 // Define engine constant
 
@@ -6,22 +7,15 @@ const ENGINE = new Dimensional.System( { animUpdateInterval: 60 } )
 
 // Some constants need for this program
 
-const SETTINGS = {
-    CAMERA_ZOOM_OUT_MULT: 0.5,
-    CUBE_SIZE: 0.1,
-    RAND_COLOR: Dimensional.Utils.Math.randomThreeColor(),
-    SIZE_COUNT: 16,
-}
-
 const BG_COLOR = new Dimensional.Three.Color( 
-    SETTINGS.RAND_COLOR.r / 8, 
-    SETTINGS.RAND_COLOR.g / 8, 
-    SETTINGS.RAND_COLOR.b / 8 
+    Settings.RAND_COLOR.r / 8, 
+    Settings.RAND_COLOR.g / 8, 
+    Settings.RAND_COLOR.b / 8 
 )
 
-const CUBE_GEOMETRY = new Dimensional.Three.IcosahedronGeometry( SETTINGS.CUBE_SIZE / 1.5, 0 )
+const CUBE_GEOMETRY = new Dimensional.Three.IcosahedronGeometry( Settings.CUBE_SIZE / 1.5, 0 )
 const MATERIAL_NORMAL = new Dimensional.Three.MeshNormalMaterial()
-const MATERIAL_COLORED = new Dimensional.Three.MeshPhongMaterial( { color: SETTINGS.RAND_COLOR } )
+const MATERIAL_COLORED = new Dimensional.Three.MeshPhongMaterial( { color: Settings.RAND_COLOR } )
 const TESTING = false
 
 // Create assemblies
@@ -31,7 +25,7 @@ ENGINE.Managers.ECS.createAssembly( 'Camera', async ( e, params ) => {
     e.setName( 'Camera' )
     await e.addComponent( ENGINE.ECS.CameraComponent, params )
 
-    await e.addComponent( ENGINE.ECS.OrbitCameraControlsComponent , {
+    await e.addComponent( ENGINE.ECS.OrbitCameraControlsComponent, {
         enableDamping: true
     } )
 
@@ -52,7 +46,7 @@ ENGINE.Managers.ECS.createAssembly( 'Mesh Box', async ( e, material, objectScale
         ENGINE.ECS.InstancedMeshComponent, 
         CUBE_GEOMETRY, 
         material, 
-        SETTINGS.SIZE_COUNT * SETTINGS.SIZE_COUNT * SETTINGS.SIZE_COUNT
+        Settings.SIZE_COUNT * Settings.SIZE_COUNT * Settings.SIZE_COUNT
     )
 
     await e.addComponent( ENGINE.ECS.InstancedMeshBoxComponent, objectScale )
@@ -80,22 +74,22 @@ ENGINE.onStart = async () => {
     // Assemble entities
 
     await ENGINE.Managers.ECS.assemble( 'Camera', {
-        position: new Dimensional.Three.Vector3( 0, SETTINGS.SIZE_COUNT * SETTINGS.CAMERA_ZOOM_OUT_MULT * 10, 0 )
+        position: new Dimensional.Three.Vector3( 0, Settings.SIZE_COUNT * Settings.CAMERA_ZOOM_OUT_MULT * 10, 0 )
     } )
 
     const CAMERA = await ENGINE.Managers.ECS.assemble( 'Camera', {
         parent: SCENE2,
         position: new Dimensional.Three.Vector3(
-            SETTINGS.SIZE_COUNT * SETTINGS.CAMERA_ZOOM_OUT_MULT, 
-            SETTINGS.SIZE_COUNT * SETTINGS.CAMERA_ZOOM_OUT_MULT,
-            SETTINGS.SIZE_COUNT * SETTINGS.CAMERA_ZOOM_OUT_MULT 
+            Settings.SIZE_COUNT * Settings.CAMERA_ZOOM_OUT_MULT, 
+            Settings.SIZE_COUNT * Settings.CAMERA_ZOOM_OUT_MULT,
+            Settings.SIZE_COUNT * Settings.CAMERA_ZOOM_OUT_MULT 
         ),
     } )
 
     const SCALE = new Dimensional.Three.Vector3(
-        SETTINGS.CUBE_SIZE,
-        SETTINGS.CUBE_SIZE,
-        SETTINGS.CUBE_SIZE,
+        Settings.CUBE_SIZE,
+        Settings.CUBE_SIZE,
+        Settings.CUBE_SIZE,
     )
 
     await ENGINE.Managers.ECS.assemble( 'Mesh Box', MATERIAL_NORMAL, SCALE, SCENE1 )

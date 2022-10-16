@@ -1,3 +1,5 @@
+export * as ECS from './ecs'
+export * as Geometries from './geometries'
 export * as Three from 'three'
 export * as Utils from './util'
 export { EngineSystem as System } from './system.js'

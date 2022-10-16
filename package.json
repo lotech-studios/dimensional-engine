@@ -28,6 +28,7 @@
     "@rollup/plugin-node-resolve": "^15.0.0",
     "@webpack-cli/generators": "^2.5.0",
     "babel-loader": "^8.2.5",
+    "eslint": "^8.25.0",
     "html-webpack-plugin": "^5.5.0",
     "rollup": "^3.0.0",
     "sass": "^1.55.0",
