@@ -1,1 +1,2 @@
-export { TerrainPlaneGeometry } from './TerrainPlaneGeometry.js'
+export { LinkedPlaneGeometry } from './LinkedPlaneGeometry.js'
+export { SimplexPlaneGeometry } from './SimplexPlaneGeometry.js'

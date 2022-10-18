@@ -1,4 +1,4 @@
-import { Pass } from '../libs/three/examples/postprocessing/Pass.js'
+import { Pass } from 'three/examples/jsm/postprocessing/Pass.js'
 
 /**
  * Depth-of-field post-process with bokeh shader
@@ -30,7 +30,6 @@ class SceneDepthPass extends Pass {
 
 		webGLRenderer.setRenderTarget( null )
 
-        for ( let i of this.Renderer.dbp ) i.render( webGLRenderer, readBuffer )
 		for ( let i of this.Renderer.DBM.array ) i.visible = true
 
 		this.Renderer.Scene.overrideMaterial = null

@@ -4,11 +4,11 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 class OrbitCameraControlsComponent extends ECSComponent {
 
-    constructor ( proxy, options = {} ) {
+    constructor ( proxy, cameraCompName, options = {} ) {
 
         super( proxy )
 
-        this.Camera = this.Proxy.getComponent( 'Camera' )
+        this.Camera = this.Proxy.getComponent( cameraCompName )
         this.Element = this.Engine.Managers.Interface.getState( 'Rendering' )
             .byName().getElement()
 

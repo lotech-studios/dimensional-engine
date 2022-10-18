@@ -1,72 +1,10 @@
 import * as THREE from 'three'
 import * as Utils from '../util'
+import * as Vertexes from './vertex'
 
-class LinkedVertex {
+class LinkedPlaneGeometry extends THREE.BufferGeometry {
 
-    constructor ( geo, x, y ) {
-
-        this.indexes = [] // [ 0, 1 ]
-        this.x = x
-        this.y = y
-
-        this.Parent = geo
-
-    }
-
-    addIndex () {
-
-        this.indexes.push( ...arguments )
-
-    }
-
-    getCoords () {
-
-        return new Vector3( this.x, this.y, this.getHeight() )
-
-    }
-
-    getHeight () {
-
-        return this.Parent.attributes.position.array[ ( this.indexes[ 0 ] * 3 ) + 2 ]
-        
-    }
-
-    lower ( increment ) {
-
-        const height = this.getHeight()
-
-        this.setHeight( height - increment )
-
-    }
-
-    raise ( increment ) {
-
-        const height = this.getHeight()
-
-        this.setHeight( height + increment )
-
-    }
-
-    setHeight ( height ) {
-
-        for ( let i = 0; i < this.indexes.length; i++ ) {
-
-            this.Parent.attributes.position.array[ ( this.indexes[ i ] * 3 ) + 2 ] = height
-
-        }
-
-    }
-
-}
-
-class TerrainPlaneGeometry extends THREE.BufferGeometry {
-
-	constructor ( 
-        width = 1, height = 1, widthSegments = 1, heightSegments = 1,
-        simplex, simplexSX, simplexSY, simplexRX, simplexRY, simplexAmp,
-        peakAmp, peakStartHeight,
-        seaLevel
-    ) {
+	constructor ( width = 1, height = 1, widthSegments = 1, heightSegments = 1 ) {
 
 		super()
 
@@ -87,12 +25,6 @@ class TerrainPlaneGeometry extends THREE.BufferGeometry {
         let xList = []
         let yList = []
 
-        let simAmp = simplexAmp
-        let simRX = simplexRX
-        let simRY = simplexRY
-        let simSX = simplexSX
-        let simSY = simplexSY
-
         const XY = {}
 
 		const width_half = width / 2
@@ -106,9 +38,6 @@ class TerrainPlaneGeometry extends THREE.BufferGeometry {
 
 		const segment_width = width / gridX
 		const segment_height = height / gridY
-
-        const simDivX = simRX / gridX
-        const simDivY = simRY / gridY
 
 		//
 
@@ -126,18 +55,7 @@ class TerrainPlaneGeometry extends THREE.BufferGeometry {
 				const x = ix * segment_width - width_half
                 const ny = - y
 
-                const rX = ( simSX * simRX ) + ( ix * simDivX )
-                const rY = ( simSY * simRY ) + ( iy * simDivY )
-
-                let height = ( Utils.Noise.simplexOctave( simplex, rX, rY, 16 ) - seaLevel ) * simAmp
-
-                if ( height >= peakStartHeight ) {
-
-                    height = height + ( peakAmp * ( height - peakStartHeight ) )
-
-                }
-
-				vertices.push( x, - y, height )
+				vertices.push( x, - y, 0 )
 
                 const tx = Number( x.toFixed( 4 ) )
                 const ty = Number( ny.toFixed( 4 ) )
@@ -212,7 +130,7 @@ class TerrainPlaneGeometry extends THREE.BufferGeometry {
                 const lxyString = `${ xList[ lx ] },${ yList[ ly ] }`
                 const n = ( ly * xList.length ) + lx
 
-                const Vertex = new LinkedVertex( this, xList[ lx ], yList[ ly ] )
+                const Vertex = new Vertexes.LinkedVertex( this, xList[ lx ], yList[ ly ] )
                 Vertex.addIndex( ...XY[ lxyString ] )
 
                 this.Vertices.indexed.push( Vertex )
@@ -279,6 +197,6 @@ class TerrainPlaneGeometry extends THREE.BufferGeometry {
 
 }
 
-TerrainPlaneGeometry.prototype.isTerrainPlaneGeometry = true
+LinkedPlaneGeometry.prototype.isLinkedPlaneGeometry = true
 
-export { TerrainPlaneGeometry }
+export { LinkedPlaneGeometry }

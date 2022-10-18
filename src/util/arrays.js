@@ -4,6 +4,12 @@ export function getIndex ( array, value ) {
 
 }
 
+export function getRandomValue ( array ) {
+
+    return array[ Math.floor( Math.random() * array.length ) ]
+
+}
+
 export function removeIndex ( array, index ) {
 
     array.splice( index, 1 )

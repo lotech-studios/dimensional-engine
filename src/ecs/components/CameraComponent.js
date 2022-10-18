@@ -18,8 +18,11 @@ class CameraComponent extends ThreeObjectComponent {
 
         this.Parent = ScriptUtils.checkParam( params, 'parent', null )
         this.Position = ScriptUtils.checkParam( params, 'position', new THREE.Vector3() )
-        this.Target = ScriptUtils.checkParam( params, 'target', null )
         this.Type = ScriptUtils.checkParam( params, 'type', THREE.PerspectiveCamera )
+
+        this.Depth = {
+            distance: 0,
+        }
 
     }
 
@@ -38,20 +41,9 @@ class CameraComponent extends ThreeObjectComponent {
         this.Camera = await this.Engine.Managers.Camera.buildCamera( 
             this.name, this.Type, this.fov, this.aspect, this.near, this.far )
         this.Camera.position.copy( this.Position )
-        this.Camera.lookAt( ...TARGET  )
-        this.Camera.helper = new THREE.CameraHelper( this.Camera )
+        this.Camera.Depth = this.Depth
 
         if ( this.Parent ) this.setParent( this.Parent )
-
-    }
-
-    update ( deltaTime, elapsedTime ) {
-
-        if ( this.Target ) {
-
-            this.Camera.lookAt( this.Target.x, this.Target.y, this.Target.z )
-
-        }
 
     }
 

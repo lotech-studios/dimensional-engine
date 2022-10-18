@@ -1,4 +1,5 @@
 export * as Array from './arrays.js'
+export * as Geometry from './geometry.js'
 export * as Interface from './interface.js'
 export * as Materials from './materials.js'
 export * as Math from './math.js'

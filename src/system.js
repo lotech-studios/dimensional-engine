@@ -7,11 +7,7 @@ import * as ThreeNodes from 'three/examples/jsm/nodes/Nodes.js'
 
 // Manager imports
 
-import { ECSManager } from './managers/ECSManager.js'
-import { InterfaceManager } from './managers/InterfaceManager.js'
-import { RendererManager } from './managers/RendererManager.js'
-import { CameraManager } from './managers/CameraManager.js'
-import { SceneManager } from './managers/SceneManager.js'
+import * as Managers from './managers'
 
 // Tool imports
 
@@ -46,11 +42,12 @@ class EngineSystem {
         this.ECS = ECS
 
         this.Managers = {
-            Camera: new CameraManager(),
-            ECS: new ECSManager( this ),
-            Interface: new InterfaceManager(),
-            Renderer: new RendererManager( this ),
-            Scene: new SceneManager(),
+            Camera: new Managers.CameraManager(),
+            ECS: new Managers.ECSManager( this ),
+            Interface: new Managers.InterfaceManager(),
+            Models: new Managers.ModelManager( this ),
+            Renderer: new Managers.RendererManager( this ),
+            Scene: new Managers.SceneManager(),
         }
 
         this.Tools = {

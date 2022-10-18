@@ -1,4 +1,4 @@
-import { Pass } from '../libs/three/examples/postprocessing/Pass.js'
+import { Pass } from 'three/examples/jsm/postprocessing/Pass.js'
 
 class RenderPass extends Pass {
 

@@ -33,14 +33,6 @@ class RendererManager {
 
     }
 
-    async addDepthBasedPass ( rendererName, pc, ...pcArgs ) {
-
-        const RENDERER = this.Renderers.get( rendererName )
-
-        await RENDERER.addDepthBasedPass( pc, ...pcArgs )
-
-    }
-
     async removeDepthBasedMesh ( rendererName, mesh ) {
 
         const RENDERER = this.Renderers.get( rendererName )
@@ -52,8 +44,6 @@ class RendererManager {
     async buildRenderer ( name, scene, camera, params = {} ) {
 
         const RENDERER = new Renderer( this, scene, camera, params )
-        
-        await RENDERER.onBuild()
 
         this.Renderers.add( name, RENDERER )
 
