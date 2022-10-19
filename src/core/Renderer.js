@@ -1,6 +1,8 @@
+import * as Constants from './constants.js'
 import * as PostProcessing from '../postprocessing'
 import * as ScriptUtils from '../util/script.js'
 import * as THREE from 'three'
+import CSM from 'three-csm/src/CSM.js'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { GammaCorrectionShader } from 'three/examples/jsm/shaders/GammaCorrectionShader.js'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
@@ -32,11 +34,27 @@ class Renderer {
 
         this.Settings = {
             postProcessing: ScriptUtils.checkParam( params, 'postProcessing', true ),
+            shadowsEnabled: ScriptUtils.checkParam( params, 'shadowsEnabled', true ),
+            shadowType: ScriptUtils.checkParam( params, 'shadowType', THREE.PCFSoftShadowMap ),
 
             Size: new Vector2( 
                 ScriptUtils.checkParam( params, 'width', 'window-x' ), 
                 ScriptUtils.checkParam( params, 'height', 'window-y' )
             ),
+
+            CSM: {
+                enabled: true,
+
+                cascades: 3,
+                fade: true,
+                lightDirection: new THREE.Vector3( 1, -1, 1 ).normalize(),
+                lightFar: 5000,
+	            lightNear: 0.1,
+                maxFar: 10,
+	            shadowBias: 0,
+                shadowMapSize: 2048,
+                splitsCallback: Constants.CSM_SPLITS_CALLBACK,
+            }
         }
 
         // Materials and such
@@ -57,6 +75,28 @@ class Renderer {
         this.Renderer.name = this.name
         this.Renderer.domElement.style.pointerEvents = this.pointerEvents
         this.Renderer.gammaOutput = 2.2
+        this.Renderer.shadowMap.enabled = this.Settings.shadowsEnabled
+        this.Renderer.shadowMap.type = this.Settings.shadowType
+
+        if ( this.Settings.CSM.enabled ) {
+
+            this.CSM = new CSM( {
+                maxFar: this.Settings.CSM.maxFar,
+                cascades: this.Settings.CSM.cascades,
+                shadowMapSize: this.Settings.CSM.shadowMapSize,
+                lightDirection: this.Settings.CSM.shadowMapSize.lightDirection,
+                camera: this.Camera,
+                parent: this.Scene,
+                mode: 'custom',
+                customSplitsCallback: this.Settings.CSM.splitsCallback,
+                lightFar: this.Settings.CSM.lightFar,
+                lightNear: this.Settings.CSM.lightNear,
+                shadowBias: this.Settings.CSM.shadowBias,
+            } )
+    
+            this.CSM.fade = true
+
+        }
         
         // Sizing and targets
 
@@ -127,6 +167,8 @@ class Renderer {
 
     render ( deltaTime ) {
 
+        if ( this.Settings.CSM.enabled ) this.CSM.update( this.Camera.matrix )
+
         if ( this.Settings.postProcessing ) this.Composer.render( deltaTime )
         else this.Renderer.render( this.Scene, this.Camera )
 
@@ -159,6 +201,12 @@ class Renderer {
     setScene ( scene ) {
 
         this.Scene = scene
+
+    }
+
+    setupCSMMaterial ( material ) {
+
+        if ( this.Settings.CSM.enabled ) this.CSM.setupMaterial( material )
 
     }
 

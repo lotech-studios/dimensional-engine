@@ -1,0 +1,16 @@
+{
+    "path": "./public/images/textures/",
+    "list": {
+        "polygons": {
+            "url": "./seamless/polygons.jpg",
+
+            "options": {
+                "wrapS": "THREE.RepeatWrapping",
+                "wrapT": "THREE.RepeatWrapping",
+                "magFilter": "THREE.NearestFilter",
+                "minFilter": "THREE.NearestFilter",
+                "repeat": [ 16, 16 ]
+            }
+        }
+    }
+}

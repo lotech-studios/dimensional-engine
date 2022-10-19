@@ -5,97 +5,87 @@ import * as Settings from './settings.js'
 
 const ENGINE = new Dimensional.System()
 
-// Some constants need for this program
-
-const MATERIAL_COLORED = new Dimensional.Three.MeshPhongMaterial( { color: Settings.RAND_COLOR } )
-
 // Create assemblies
 
-const createTree = async () => {
-
-    const COLOR_GREEN = new Dimensional.Three.Color( 0x00ff00 )
-    const COLOR_PURPLE = new Dimensional.Three.Color( 0xff00ff )
+const createTree = async ( terrain ) => {
 
     const GLTF_TREE = await ENGINE.Managers.Models.load( './public/models/tree.gltf' )
-
-    console.log( GLTF_TREE )
-
     const MESH_TREE = GLTF_TREE.scene.children[ 0 ]
-    MESH_TREE.translateY( 0.1 )
-    MESH_TREE.scale.setScalar( 0.01, 0.01, 0.01 )
+    
+    ENGINE.Managers.Renderer.get( 'Main' ).setupCSMMaterial( MESH_TREE.material )
 
-    MESH_TREE.material.onBeforeCompile = ( shader ) => {
+    // MESH_TREE.material.onBeforeCompile = ( shader ) => {
 
-        MESH_TREE.material.shader = shader
+    //     MESH_TREE.material.shader = shader
 
-        shader.uniforms[ 'time' ] = { value: 0.0 }  
+    //     shader.uniforms[ 'time' ] = { value: 0.0 }  
 
-        shader.vertexShader = `
-            uniform float time;
+    //     shader.vertexShader = `
+    //         uniform float time;
 
-            float N (vec2 st) { // https://thebookofshaders.com/10/
-                return fract( sin( dot( st.xy, vec2(12.9898,78.233 ) ) ) *  43758.5453123);
-            }
+    //         float N (vec2 st) { // https://thebookofshaders.com/10/
+    //             return fract( sin( dot( st.xy, vec2(12.9898,78.233 ) ) ) *  43758.5453123);
+    //         }
             
-            float smoothNoise( vec2 ip ){ // https://www.youtube.com/watch?v=zXsWftRdsvU
-                vec2 lv = fract( ip );
-              vec2 id = floor( ip );
+    //         float smoothNoise( vec2 ip ){ // https://www.youtube.com/watch?v=zXsWftRdsvU
+    //             vec2 lv = fract( ip );
+    //           vec2 id = floor( ip );
               
-              lv = lv * lv * ( 3. - 2. * lv );
+    //           lv = lv * lv * ( 3. - 2. * lv );
               
-              float bl = N( id );
-              float br = N( id + vec2( 1, 0 ));
-              float b = mix( bl, br, lv.x );
+    //           float bl = N( id );
+    //           float br = N( id + vec2( 1, 0 ));
+    //           float b = mix( bl, br, lv.x );
               
-              float tl = N( id + vec2( 0, 1 ));
-              float tr = N( id + vec2( 1, 1 ));
-              float t = mix( tl, tr, lv.x );
+    //           float tl = N( id + vec2( 0, 1 ));
+    //           float tr = N( id + vec2( 1, 1 ));
+    //           float t = mix( tl, tr, lv.x );
               
-              return mix( b, t, lv.y );
-            }
+    //           return mix( b, t, lv.y );
+    //         }
 
-            ${ shader.vertexShader }
-        `
+    //         ${ shader.vertexShader }
+    //     `
 
-        shader.vertexShader = shader.vertexShader.replace( '#include <begin_vertex>', `
-            // #include <begin_vertex>
+    //     shader.vertexShader = shader.vertexShader.replace( '#include <begin_vertex>', `
+    //         // #include <begin_vertex>
 
-            float t = time * 2.;
+    //         float t = time * 2.;
 
-            vec4 mvxPosition = vec4( position, 1.0 );
-            #ifdef USE_INSTANCING
-                mvxPosition = instanceMatrix * mvxPosition;
-            #endif
+    //         vec4 mvxPosition = vec4( position, 1.0 );
+    //         #ifdef USE_INSTANCING
+    //             mvxPosition = instanceMatrix * mvxPosition;
+    //         #endif
 
-            // DISPLACEMENT
+    //         // DISPLACEMENT
 
-            float noise = smoothNoise(mvxPosition.xz * 0.5 + vec2(0., t));
-            noise = pow(noise * 0.5 + 0.5, 2.) * 2.;
+    //         float noise = smoothNoise(mvxPosition.xz * 0.5 + vec2(0., t));
+    //         noise = pow(noise * 0.5 + 0.5, 2.) * 2.;
 
-            // here the displacement is made stronger on the blades tips.
-            float dispPower = 1. - cos( mvxPosition.y * 3.1416 * 0.05 );
+    //         // here the displacement is made stronger on the blades tips.
+    //         float dispPower = 1. - cos( mvxPosition.y * 3.1416 * 0.05 );
 
-            float displacement = noise * ( 0.1 * dispPower );
-            mvxPosition.z -= displacement;
-            mvxPosition.x -= displacement;
+    //         float displacement = noise * ( 0.1 * dispPower );
+    //         mvxPosition.z -= displacement;
+    //         mvxPosition.x -= displacement;
 
-            vec3 transformed = mvxPosition.xyz;
-        ` )
+    //         vec3 transformed = mvxPosition.xyz;
+    //     ` )
 
-        shader.vertexShader = shader.vertexShader.replace( '#include <fog_vertex>', `
-            #include <fog_vertex>
+    //     shader.vertexShader = shader.vertexShader.replace( '#include <fog_vertex>', `
+    //         #include <fog_vertex>
 
-            vec4 modelViewPosition = modelViewMatrix * mvxPosition;
-            gl_Position = projectionMatrix * modelViewPosition;
-        ` )
+    //         vec4 modelViewPosition = modelViewMatrix * mvxPosition;
+    //         gl_Position = projectionMatrix * modelViewPosition;
+    //     ` )
 
-        ENGINE.onRender = ( dT, eT ) => {
+    //     ENGINE.onRender = ( dT, eT ) => {
 
-            MESH_TREE.material.shader.uniforms[ 'time' ].value += ENGINE.Time.delta
+    //         MESH_TREE.material.shader.uniforms[ 'time' ].value += ENGINE.Time.delta
         
-        }
+    //     }
 
-    }
+    // }
 
     ENGINE.Managers.ECS.createAssembly( 'Forest', async ( e ) => {
 
@@ -108,6 +98,7 @@ const createTree = async () => {
         )
 
         const MESH_COMP = e.getComponent( 'InstancedMesh' )
+        MESH_COMP.Mesh.castShadow = true
         MESH_COMP.setParent( ENGINE.Managers.Scene.get( 'Main' ) )
 
         for ( let i = 0; i < 1000; i++ ) {
@@ -133,11 +124,6 @@ ENGINE.Managers.ECS.createAssembly( 'Light', async ( e ) => {
 
     e.setName( 'Light' )
 
-    await e.addComponent( ENGINE.ECS.DirectionalLightComponent, {
-        parent: ENGINE.Managers.Scene.get( 'Main' ),
-        position: new Dimensional.Three.Vector3( 100, 100, 100 ),
-    } )
-
     await e.addComponent( ENGINE.ECS.HemiLightComponent, {
         intensity: 0.25,
         parent: ENGINE.Managers.Scene.get( 'Main' ),
@@ -158,7 +144,8 @@ ENGINE.Managers.ECS.createAssembly( 'Terrain', async ( e ) => {
             vertexColoring: false,
 
             material: new Dimensional.Three.MeshPhongMaterial( {
-                color: 0x326400,
+                color: 0x163200,
+                map: ENGINE.Managers.Textures.get( 'polygons' ),
                 shininess: 0,
             } )
         }
@@ -184,9 +171,15 @@ ENGINE.Managers.ECS.createAssembly( 'Terrain', async ( e ) => {
 
 } )
 
-// Build engine start method
+// Build engine load methods
 
-ENGINE.onStart = async () => {
+ENGINE.onBeforeLoad = async () => {
+
+    ENGINE.Managers.Textures.setStartBatch( [ './src/batches/textures.json' ] )
+
+}
+
+ENGINE.onLoaded = async () => {
 
     // Build scenes
 
@@ -215,16 +208,18 @@ ENGINE.onStart = async () => {
     // activate renderer
 
     await ENGINE.Managers.Renderer.Renderers.activate( 'Main' )
+    ENGINE.Tools.RendererInterface.selectCamera( 'Main' )
+    ENGINE.Tools.RendererInterface.selectScene( 'Main' )
 
     // generate terrain
 
     await ENT_TERRAIN.getComponent( 'Terrain' )
         .generate( ENGINE.Managers.Renderer.get( 'Main' ) )
 
-    ENGINE.Tools.RendererInterface.selectCamera( 'Main' )
-    ENGINE.Tools.RendererInterface.selectScene( 'Main' )
+    ENGINE.Managers.Renderer.get( 'Main' ).setupCSMMaterial(
+        ENT_TERRAIN.getComponent( 'Terrain' ).Material )
 
-    await createTree()
+    await createTree( ENT_TERRAIN )
 
 }
 

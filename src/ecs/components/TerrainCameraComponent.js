@@ -1,8 +1,8 @@
 import * as ScriptUtils from '../../util/script.js'
 import * as THREE from 'three'
-import { CameraComponent } from './CameraComponent.js'
+import { PerspectiveCameraComponent } from './PerspectiveCameraComponent.js'
 
-class TerrainCameraComponent extends CameraComponent {
+class TerrainCameraComponent extends PerspectiveCameraComponent {
 
     constructor ( proxy, params = {} ) {
 

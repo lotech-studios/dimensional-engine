@@ -48,6 +48,7 @@ class EngineSystem {
             Models: new Managers.ModelManager( this ),
             Renderer: new Managers.RendererManager( this ),
             Scene: new Managers.SceneManager(),
+            Textures: new Managers.TextureManager( this ),
         }
 
         this.Tools = {
@@ -77,8 +78,6 @@ class EngineSystem {
     
                 }
 
-                this.onRender()
-
                 // Update ECS process
     
                 this.Managers.ECS.update( this.Time.delta, this.Time.elapsed, this.updateAnim )
@@ -88,6 +87,8 @@ class EngineSystem {
                 this.Managers.Renderer.update( this.Time.delta )
     
                 if ( this.updateAnim ) this.updateAnim = false
+
+                this.onRender()
 
                 // Loop render process
 
@@ -101,7 +102,9 @@ class EngineSystem {
 
     }
 
-    async onStart ( engine = this ) { /** Stuff goes here */ }
+    async onBeforeLoad ( engine = this ) { /** Stuff goes here */ }
+    async onLoaded ( engine = this ) { /** Stuff goes here */ }
+
     onRender () {}
 
     async buildEvents () {
@@ -141,14 +144,19 @@ class EngineSystem {
             this.Managers.Interface.getState( 'Dev' ).byName().show()
 
             this.Settings.devToolsShowing = true
+
         }
 
     }
 
     async start () {
 
+        await this.onBeforeLoad( this )
+
+        await this.Managers.Textures.loadStartBatch()
+
         await this.buildEvents()
-        await this.onStart( this )
+        await this.onLoaded( this )
 
         this.render()
 

@@ -33,6 +33,7 @@ class TerrainChunk {
         this.Mesh = new THREE.Mesh( this.Geometry, this.Proxy.Material )
         this.Mesh.position.set( x, 0, y )
         this.Mesh.rotateX( Math.PI / -2 )
+        this.Mesh.receiveShadow = true
 
         this.Proxy.chunks.push( this )
         this.Proxy.chunkMeshes.push( this.Mesh )
@@ -50,9 +51,9 @@ class TerrainComponent extends ECSComponent {
 
         this.chunkMeshes = []
         this.chunkSegments = Utils.Script.checkParam( params, 'chunkSegments', 32 )
-        this.chunkSimplexAmp = Utils.Script.checkParam( params, 'chunkSimplexAmp', 0.025 )
-        this.chunkSimplexRangeX = Utils.Script.checkParam( params, 'chunkSimplexRangeX', 1 )
-        this.chunkSimplexRangeY = Utils.Script.checkParam( params, 'chunkSimplexRangeY', 1 )
+        this.chunkSimplexAmp = Utils.Script.checkParam( params, 'chunkSimplexAmp', 0.75 )
+        this.chunkSimplexRangeX = Utils.Script.checkParam( params, 'chunkSimplexRangeX', 0.125 )
+        this.chunkSimplexRangeY = Utils.Script.checkParam( params, 'chunkSimplexRangeY', 0.125 )
         this.chunkSize = Utils.Script.checkParam( params, 'chunkSize', 1 )
         this.chunks = []
         this.chunksX = Utils.Script.checkParam( params, 'chunksX', 5 )
