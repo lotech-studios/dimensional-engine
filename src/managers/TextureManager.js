@@ -1,5 +1,6 @@
 import * as Constants from '../core/constants.js'
 import * as THREE from 'three'
+import * as Utils from '../util'
 
 class TextureManager {
 
@@ -47,8 +48,7 @@ class TextureManager {
          * }
          */
 
-        const RESPONSE = await fetch( jsonURL )
-        const DATA = await RESPONSE.json()
+        const DATA = await Utils.Files.loadJSON( jsonURL )
 
         if ( DATA.path ) this.Loader.setPath( DATA.path )
 

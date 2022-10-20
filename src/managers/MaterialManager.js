@@ -1,23 +1,47 @@
-import * as ScriptUtils from '../util/script.js'
+import * as Utils from '../util'
 
 class MaterialManager {
 
-    constructor () {
+    constructor ( engine ) {
 
-        this.Materials = ScriptUtils.createStorageTable()
+        this.Engine = engine
+
+        this.startBatch = []
+
+        this.Materials = {}
 
     }
 
-    async buildMaterial ( name ) {}
+    async addFromJSON ( jsonURL ) {
 
-    async loadFromJSON ( file ) {
+        /**
+         * JSON Format
+         * 
+         * Loads a JSON as long as it is in this format.
+         *  
+         * {
+         *      "list": { 
+         *          "name": {
+         *              "type": "THREE.MeshPhongMaterial",
+         *              
+         *              "options": {
+         *                  "wrapS": "THREE.ReapeatWrapping",
+         *                  "wrapT": "THREE.ReapeatWrapping",
+         *                  "magFilter": "THREE.NearestFilter",
+         *                  "repeat": [ 4, 4 ]
+         *                  ...
+         *              }
+         *          }
+         *          ...
+         *      } 
+         * }
+         */
 
-        const RESPONSE = await fetch( file )
-        const DATA = await RESPONSE.json()
+        const DATA = await Utils.Files.loadJSON( jsonURL )
 
         for ( const m in DATA ) {
 
-            this.Materials.add()
+            
 
         }
 
