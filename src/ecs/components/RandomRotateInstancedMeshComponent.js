@@ -26,7 +26,7 @@ class RandomRotateInstancedMeshComponent extends ECSComponent {
 
     }
     
-    update ( dT ) {
+    onUpdate ( dT ) {
 
         for ( let i = 0; i < this.Mesh.count; i++ ) {
 

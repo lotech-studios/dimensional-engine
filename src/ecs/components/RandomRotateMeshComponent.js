@@ -19,7 +19,7 @@ class RandomRotateMeshComponent extends ECSComponent {
 
     }
     
-    update ( dT ) {
+    onUpdate ( dT ) {
 
         this.Mesh.rotation.x += dT * this.Range.x
         this.Mesh.rotation.y += dT * this.Range.y

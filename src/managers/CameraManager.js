@@ -1,10 +1,12 @@
-import * as ScriptUtils from '../util/script.js'
+import * as Utils from '../util'
 
 class CameraManager {
 
-    constructor () {
+    constructor ( engine ) {
 
-        this.Cameras = ScriptUtils.createStorageTable()
+        this.Engine = engine
+
+        this.Cameras = Utils.Script.createStorageTable()
 
     }
 

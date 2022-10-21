@@ -94,7 +94,15 @@ class Renderer {
                 shadowBias: this.Settings.CSM.shadowBias,
             } )
     
-            this.CSM.fade = true
+            this.CSM.fade = this.Settings.CSM.fade
+
+            for ( const m in this.Manager.Engine.Managers.Materials.Materials ) {
+
+                const MATERIAL = this.Manager.Engine.Managers.Materials.Materials[ m ]
+
+                if ( MATERIAL.csm ) this.setupCSMMaterial( MATERIAL )
+
+            }
 
         }
         

@@ -352,16 +352,6 @@ class TerrainComponent extends ECSComponent {
 
     }
 
-    update ( dT, eT ) {
-
-        if ( this.WaterMaterial && this.WaterMaterial.Shader ) {
-
-            this.WaterMaterial.Shader.uniforms.time.value += dT
-
-        }
-
-    }
-
 }
 
 TerrainComponent.prototype.$name = 'Terrain'

@@ -1,5 +1,6 @@
 export { CameraManager } from './CameraManager.js'
 export { ECSManager } from './ECSManager.js'
+export { InputManager } from './InputManager.js'
 export { InterfaceManager } from './InterfaceManager.js'
 export { Manager } from './Manager.js'
 export { MaterialManager } from './MaterialManager.js'

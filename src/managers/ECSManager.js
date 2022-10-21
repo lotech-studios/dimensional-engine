@@ -1,4 +1,4 @@
-import * as ScriptUtils from '../util/script.js'
+import * as Utils from '../util'
 import { ECSEntity } from '../ecs/ECSEntity.js'
 
 class ECSManager {
@@ -12,7 +12,7 @@ class ECSManager {
         //
 
         this.Assemblies = {}
-        this.Entities = ScriptUtils.createStorageTable()
+        this.Entities = Utils.Script.createStorageTable()
 
     }
 

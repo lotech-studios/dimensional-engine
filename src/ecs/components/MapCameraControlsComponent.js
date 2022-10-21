@@ -1,8 +1,8 @@
+import * as Controls from '../../controls'
 import * as THREE from 'three'
 import { ECSComponent } from '../ECSComponent.js'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
-class OrbitCameraControlsComponent extends ECSComponent {
+class MapCameraControlsComponent extends ECSComponent {
 
     constructor ( proxy, cameraCompName, options = {} ) {
 
@@ -12,7 +12,7 @@ class OrbitCameraControlsComponent extends ECSComponent {
         this.Element = this.Engine.Managers.Interface.getState( 'Rendering' )
             .byName().getElement()
 
-        this.Controls = new OrbitControls( this.Camera.get(), this.Element )
+        this.Controls = new Controls.MapControls( this.Camera.get(), this.Element )
 
         for ( const o in options ) this.Controls[ o ] = options[ o ]
 
@@ -20,7 +20,7 @@ class OrbitCameraControlsComponent extends ECSComponent {
 
     }
 
-    update () {
+    onUpdate () {
 
         this.Controls.update()
 
@@ -28,6 +28,6 @@ class OrbitCameraControlsComponent extends ECSComponent {
 
 }
 
-OrbitCameraControlsComponent.prototype.$name = 'OrbitCameraControls'
+MapCameraControlsComponent.prototype.$name = 'MapCameraControls'
 
-export { OrbitCameraControlsComponent }
+export { MapCameraControlsComponent }

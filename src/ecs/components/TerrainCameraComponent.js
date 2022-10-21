@@ -14,7 +14,7 @@ class TerrainCameraComponent extends PerspectiveCameraComponent {
 
     }
 
-    update ( dT, eT ) {
+    onUpdate ( dT, eT ) {
 
         this.RayVec.x = ( ( window.innerWidth / 2 ) / window.innerWidth ) * 2 - 1
         this.RayVec.y = - ( ( window.innerHeight / 2 ) / window.innerHeight ) * 2 + 1

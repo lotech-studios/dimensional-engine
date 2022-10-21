@@ -61,6 +61,20 @@ class HemiLightComponent extends ECSComponent {
 
     }
 
+    onUpdate () {
+
+        if ( DeviceInput.getPointerButtonDown( 0 ) ) {
+
+            console.log( 'ass' )
+
+        } else if ( DeviceInput.getPointerButtonUp( 0 ) ) {
+
+            console.log( 'balls' )
+
+        }
+
+    }
+
 }
 
 HemiLightComponent.prototype.$name = 'HemiLight'

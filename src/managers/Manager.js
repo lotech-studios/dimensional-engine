@@ -1,10 +1,10 @@
-import * as ScriptUtils from '../util/script.js'
+import * as Utils from '../util'
 
 class Manager {
 
     constructor () {
 
-        this.Storage = ScriptUtils.createStorageTable()
+        this.Storage = Utils.Script.createStorageTable()
 
     }
 

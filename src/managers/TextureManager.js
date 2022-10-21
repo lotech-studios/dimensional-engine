@@ -70,9 +70,9 @@ class TextureManager {
 
                     } else if ( typeof OPTION == 'string' ) {
 
-                        if ( OPTION.includes( 'THREE.' ) ) {
+                        if ( Utils.Three.isLibString( OPTION ) ) {
 
-                            texture[ o ] = THREE[ OPTION.slice( 6 ) ]
+                            texture[ o ] = Utils.Three.retrieveLibString( OPTION )
 
                         }
 

@@ -9,41 +9,49 @@ const ENGINE = new Dimensional.System()
 
 const createTree = async ( terrain ) => {
 
-    const GLTF_TREE = await ENGINE.Managers.Models.load( './public/models/tree.gltf' )
-    const MESH_TREE = GLTF_TREE.scene.children[ 0 ]
-    
-    ENGINE.Managers.Renderer.get( 'Main' ).setupCSMMaterial( MESH_TREE.material )
-
     ENGINE.Managers.ECS.createAssembly( 'Forest', async ( e ) => {
+
+        let count = 1000
+
+        const GLTF_TREE = await ENGINE.Managers.Models.load( `./public/models/birch-tree-${ Dimensional.Utils.Array.getRandomValue( [ 'orange', 'green' ] ) }-${ Math.round( Dimensional.Utils.Math.random( 0, 1 ) ) }.gltf` )
+        const MESH_TREE = GLTF_TREE.scene.children[ 0 ]
+    
+        ENGINE.Managers.Renderer.get( 'Main' ).setupCSMMaterial( MESH_TREE.material )
 
         e.setName( 'Forest' )
     
         await e.addComponent( 
             ENGINE.ECS.InstancedMeshComponent, 
             MESH_TREE.geometry, MESH_TREE.material, 
-            1000
+            count
         )
 
         const MESH_COMP = e.getComponent( 'InstancedMesh' )
         MESH_COMP.Mesh.castShadow = true
+        MESH_COMP.Mesh.receiveShadow = true
         MESH_COMP.setParent( ENGINE.Managers.Scene.get( 'Main' ) )
 
-        for ( let i = 0; i < 1000; i++ ) {
+        for ( let i = 0; i < count; i++ ) {
 
-            const VEC = new Dimensional.Three.Vector3(
-                Dimensional.Utils.Math.random( -2, 2 ),
-                0,
-                Dimensional.Utils.Math.random( -2, 2 )
-            )
+            const POS_VEC = new Dimensional.Three.Vector3(
+                Dimensional.Utils.Math.random( -2, 2 ), 0, Dimensional.Utils.Math.random( -2, 2 ) )
+
+            const ROT_VEC = new Dimensional.Three.Vector3(
+                0, Dimensional.Utils.Math.random( -Math.PI, Math.PI ), 0 )
 
             MESH_COMP.setInstanceScale( i, 0.0025 )
-            MESH_COMP.setInstancePosition( i, VEC )
+            MESH_COMP.setInstancePosition( i, POS_VEC )
+            MESH_COMP.setInstanceRotation( i, ROT_VEC )
 
         }
     
     } )
 
-    await ENGINE.Managers.ECS.assemble( 'Forest' )
+    for ( let i = 0; i < 10; i++ ) {
+
+        await ENGINE.Managers.ECS.assemble( 'Forest' )
+
+    }
 
 }
 
@@ -70,11 +78,7 @@ ENGINE.Managers.ECS.createAssembly( 'Terrain', async ( e ) => {
             flat: true,
             vertexColoring: false,
 
-            material: new Dimensional.Three.MeshPhongMaterial( {
-                color: 0x163200,
-                map: ENGINE.Managers.Textures.get( 'polygons' ),
-                shininess: 0,
-            } )
+            material: await ENGINE.Managers.Materials.get( 'terrain' )
         }
     )
 
@@ -83,16 +87,20 @@ ENGINE.Managers.ECS.createAssembly( 'Terrain', async ( e ) => {
         {
             name: 'Main',
             parent: ENGINE.Managers.Scene.get( 'Main' ),
-            position: new Dimensional.Three.Vector3( 4, 4, 4 ),
+            position: new Dimensional.Three.Vector3( 4, 4, -4 ),
         } 
     )
 
     await e.addComponent( 
-        ENGINE.ECS.OrbitCameraControlsComponent, 
+        ENGINE.ECS.MapCameraControlsComponent, 
         'TerrainCamera',
         {
             enableDamping: true,
             screenSpacePanning: false,
+            maxPolarAngle: Math.PI / 4,
+            minPolarAngle: Math.PI / 4,
+            maxDistance: 2,
+            minDistance: 0.25,
         } 
     )
 
@@ -102,7 +110,8 @@ ENGINE.Managers.ECS.createAssembly( 'Terrain', async ( e ) => {
 
 ENGINE.onBeforeLoad = async () => {
 
-    ENGINE.Managers.Textures.setStartBatch( [ './src/batches/textures.json' ] )
+    await ENGINE.Managers.Textures.setStartBatch( [ './src/batches/textures.json' ] )
+    await ENGINE.Managers.Materials.setStartBatch( [ './src/batches/materials.json' ] )
 
 }
 
@@ -142,9 +151,6 @@ ENGINE.onLoaded = async () => {
 
     await ENT_TERRAIN.getComponent( 'Terrain' )
         .generate( ENGINE.Managers.Renderer.get( 'Main' ) )
-
-    ENGINE.Managers.Renderer.get( 'Main' ).setupCSMMaterial(
-        ENT_TERRAIN.getComponent( 'Terrain' ).Material )
 
     await createTree( ENT_TERRAIN )
 

@@ -1,5 +1,4 @@
-import * as RendererUtils from '../util/renderers.js'
-import * as ScriptUtils from '../util/script.js'
+import * as Utils from '../util'
 import * as THREE from '../../node_modules/three/build/three.module.js'
 import { Renderer } from '../core/Renderer.js'
 
@@ -8,7 +7,7 @@ class RendererManager {
     constructor ( engine ) {
 
         this.Engine = engine
-        this.Renderers = new RendererUtils.RendererStorageTable()
+        this.Renderers = new Utils.Renderer.RendererStorageTable()
 
         this.Settings = {
             PostProcessing: {

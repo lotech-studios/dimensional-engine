@@ -1,0 +1,14 @@
+ {
+    "list": { 
+        "terrain": {
+            "type": "THREE.MeshPhongMaterial",
+            "csm": true,
+
+            "options": {
+                "color": "#323200",
+                "map": "<stored@> polygons",
+                "shininess": 0
+            }
+        }
+    }
+}

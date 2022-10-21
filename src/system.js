@@ -3,8 +3,6 @@ import * as THREE from 'three'
 import * as ECS from './ecs'
 import * as Utils from './util'
 
-import * as ThreeNodes from 'three/examples/jsm/nodes/Nodes.js'
-
 // Manager imports
 
 import * as Managers from './managers'
@@ -42,12 +40,14 @@ class EngineSystem {
         this.ECS = ECS
 
         this.Managers = {
-            Camera: new Managers.CameraManager(),
+            Camera: new Managers.CameraManager( this ),
             ECS: new Managers.ECSManager( this ),
+            Input: new Managers.InputManager( this ),
             Interface: new Managers.InterfaceManager(),
+            Materials: new Managers.MaterialManager( this ),
             Models: new Managers.ModelManager( this ),
             Renderer: new Managers.RendererManager( this ),
-            Scene: new Managers.SceneManager(),
+            Scene: new Managers.SceneManager( this ),
             Textures: new Managers.TextureManager( this ),
         }
 
@@ -56,9 +56,8 @@ class EngineSystem {
             RendererInterface: new RenderInterfaceTool( this ),
         }
 
+        this.Input = this.Managers.Input
         this.Utils = Utils
-
-        this.ThreeNodes = ThreeNodes
 
         // Render method
 
@@ -93,6 +92,8 @@ class EngineSystem {
                 // Loop render process
 
                 this.Tools.RendererInterface.end()
+
+                this.Managers.Input.update()
 
                 this.render()
 
@@ -154,6 +155,7 @@ class EngineSystem {
         await this.onBeforeLoad( this )
 
         await this.Managers.Textures.loadStartBatch()
+        await this.Managers.Materials.loadStartBatch()
 
         await this.buildEvents()
         await this.onLoaded( this )

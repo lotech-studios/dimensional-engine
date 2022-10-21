@@ -1,11 +1,13 @@
-import * as ScriptUtils from '../util/script.js'
+import * as Utils from '../util'
 import * as THREE from '../../node_modules/three/build/three.module.js'
 
 class SceneManager {
 
-    constructor () {
+    constructor ( engine ) {
 
-        this.Scenes = ScriptUtils.createStorageTable()
+        this.Engine = engine
+
+        this.Scenes = Utils.Script.createStorageTable()
 
     }
 
