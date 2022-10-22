@@ -42,6 +42,9 @@ class PerspectiveCameraComponent extends ThreeObjectComponent {
         this.Camera.position.copy( this.Position )
         this.Camera.Depth = this.Depth
 
+        this.Frustum = new THREE.Frustum()
+        this.Frustum.setFromProjectionMatrix( this.Camera.projectionMatrix )
+
         if ( this.Parent ) this.setParent( this.Parent )
 
     }

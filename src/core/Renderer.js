@@ -1,7 +1,7 @@
 import * as Constants from './constants.js'
 import * as PostProcessing from '../postprocessing'
-import * as ScriptUtils from '../util/script.js'
 import * as THREE from 'three'
+import * as Utils from '../util'
 import CSM from 'three-csm/src/CSM.js'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { GammaCorrectionShader } from 'three/examples/jsm/shaders/GammaCorrectionShader.js'
@@ -14,17 +14,17 @@ class Renderer {
 
         // Argument based variables
 
-        this.active = ScriptUtils.checkParam( params, 'active', true )  
-        this.name = ScriptUtils.checkParam( params, 'name', `renderer#${ Renderer.prototype.$num }` )
-        this.pointerEvents = ScriptUtils.checkParam( params, 'pointerEvents', 'all' )
+        this.active        = Utils.Script.checkParam( params, 'active', true )  
+        this.name          = Utils.Script.checkParam( params, 'name', `renderer#${ Renderer.prototype.$num }` )
+        this.pointerEvents = Utils.Script.checkParam( params, 'pointerEvents', 'all' )
 
-        this.Camera = camera
+        this.Camera  = camera
         this.Manager = manager
-        this.Scene = scene
+        this.Scene   = scene
 
         // Storage tables
         
-        this.DBM = ScriptUtils.createStorageTable() // depth based meshes
+        this.DBM = Utils.Script.createStorageTable() // depth based meshes
 
         // Objects
         
@@ -33,27 +33,27 @@ class Renderer {
         // Build settings for renderer
 
         this.Settings = {
-            postProcessing: ScriptUtils.checkParam( params, 'postProcessing', true ),
-            shadowsEnabled: ScriptUtils.checkParam( params, 'shadowsEnabled', true ),
-            shadowType: ScriptUtils.checkParam( params, 'shadowType', THREE.PCFSoftShadowMap ),
+            postProcessing: Utils.Script.checkParam( params, 'postProcessing', true ),
+            shadowsEnabled: Utils.Script.checkParam( params, 'shadowsEnabled', true ),
+            shadowType:     Utils.Script.checkParam( params, 'shadowType', THREE.PCFSoftShadowMap ),
 
             Size: new Vector2( 
-                ScriptUtils.checkParam( params, 'width', 'window-x' ), 
-                ScriptUtils.checkParam( params, 'height', 'window-y' )
+                Utils.Script.checkParam( params, 'width', 'window-x' ), 
+                Utils.Script.checkParam( params, 'height', 'window-y' )
             ),
 
             CSM: {
-                enabled: true,
+                enabled: Utils.Script.checkParam( params, 'csmEnabled', true ),
 
-                cascades: 3,
-                fade: true,
-                lightDirection: new THREE.Vector3( 1, -1, 1 ).normalize(),
-                lightFar: 5000,
-	            lightNear: 0.1,
-                maxFar: 10,
-	            shadowBias: 0,
-                shadowMapSize: 2048,
-                splitsCallback: Constants.CSM_SPLITS_CALLBACK,
+                cascades:       Utils.Script.checkParam( params, 'csmCascades', 3 ),
+                fade:           Utils.Script.checkParam( params, 'csmFades', true ),
+                lightDirection: Utils.Script.checkParam( params, 'csmLightDirection', new THREE.Vector3( 1, -1, 1 ).normalize() ),
+                lightFar:       Utils.Script.checkParam( params, 'csmLightFar', 600 ),
+	            lightNear:      Utils.Script.checkParam( params, 'csmLightNear', 0.1 ),
+                maxFar:         Utils.Script.checkParam( params, 'csmMaxFar', 10 ),
+	            shadowBias:     Utils.Script.checkParam( params, 'csmShadowBias', 0 ),
+                shadowMapSize:  Utils.Script.checkParam( params, 'csmShadowMapSize', 2048 ),
+                splitsCallback: Utils.Script.checkParam( params, 'csmSplitsCallback', Constants.CSM_SPLITS_CALLBACK ),
             }
         }
 
@@ -81,17 +81,17 @@ class Renderer {
         if ( this.Settings.CSM.enabled ) {
 
             this.CSM = new CSM( {
-                maxFar: this.Settings.CSM.maxFar,
-                cascades: this.Settings.CSM.cascades,
-                shadowMapSize: this.Settings.CSM.shadowMapSize,
-                lightDirection: this.Settings.CSM.shadowMapSize.lightDirection,
-                camera: this.Camera,
-                parent: this.Scene,
-                mode: 'custom',
+                maxFar:               this.Settings.CSM.maxFar,
+                cascades:             this.Settings.CSM.cascades,
+                shadowMapSize:        this.Settings.CSM.shadowMapSize,
+                lightDirection:       this.Settings.CSM.shadowMapSize.lightDirection,
+                camera:               this.Camera,
+                parent:               this.Scene,
+                mode:                 'custom',
                 customSplitsCallback: this.Settings.CSM.splitsCallback,
-                lightFar: this.Settings.CSM.lightFar,
-                lightNear: this.Settings.CSM.lightNear,
-                shadowBias: this.Settings.CSM.shadowBias,
+                lightFar:             this.Settings.CSM.lightFar,
+                lightNear:            this.Settings.CSM.lightNear,
+                shadowBias:           this.Settings.CSM.shadowBias,
             } )
     
             this.CSM.fade = this.Settings.CSM.fade
@@ -108,9 +108,9 @@ class Renderer {
         
         // Sizing and targets
 
-        const PXLRATIO = this.Renderer.getPixelRatio()
-        const SIZEX = this.Settings.Size.getEquivalent( 'x' )
-        const SIZEY = this.Settings.Size.getEquivalent( 'y' )
+        const PXLRATIO  = this.Renderer.getPixelRatio()
+        const SIZEX     = this.Settings.Size.getEquivalent( 'x' )
+        const SIZEY     = this.Settings.Size.getEquivalent( 'y' )
         const TARGSIZEX = SIZEX * PXLRATIO
         const TARGSIZEY = SIZEY * PXLRATIO
 
@@ -184,9 +184,9 @@ class Renderer {
 
     resize () {
 
-        const PXLRATIO = this.Renderer.getPixelRatio()
-        const SIZEX = this.Settings.Size.getEquivalent( 'x' )
-        const SIZEY = this.Settings.Size.getEquivalent( 'y' )
+        const PXLRATIO  = this.Renderer.getPixelRatio()
+        const SIZEX     = this.Settings.Size.getEquivalent( 'x' )
+        const SIZEY     = this.Settings.Size.getEquivalent( 'y' )
         const TARGSIZEX = SIZEX * PXLRATIO
         const TARGSIZEY = SIZEY * PXLRATIO
 

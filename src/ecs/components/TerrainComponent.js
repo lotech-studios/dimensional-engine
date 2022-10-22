@@ -8,6 +8,7 @@ class TerrainChunk {
 
     constructor ( proxy, x, y ) {
 
+        this.inFrustum = false
         this.simplexSX = x
         this.simplexSY = y
 
@@ -28,6 +29,12 @@ class TerrainChunk {
             this.Proxy.seaLevel
         ).toNonIndexed()
 
+        // build trees
+
+        this.buildTrees( x, y )
+
+        //
+
         this.Geometry.computeVertexNormals()
 
         this.Mesh = new THREE.Mesh( this.Geometry, this.Proxy.Material )
@@ -41,6 +48,85 @@ class TerrainChunk {
 
     }
 
+    buildTrees ( x, y ) {
+
+        let count = 5
+        let halfSize = this.Proxy.chunkSize / 2
+        let quarterSize = this.Proxy.chunkSize / 4
+
+        this.Trees = {
+            Dummies: [],
+            Meshes: [],
+        }
+
+        for ( let m of this.Proxy.Models.Trees ) {
+
+            const Dummy = new THREE.Object3D()
+
+            this.Trees.Dummies.push( Dummy )
+
+            const MODEL_MESH = m.scene.children[ 0 ]
+            const MESH = new THREE.InstancedMesh( MODEL_MESH.geometry, this.Proxy.PaletteMaterial, count )
+
+            MESH.position.set( x, 0, y )
+            MESH.castShadow = true
+            MESH.receiveShadow = true
+
+            this.Proxy.Groups.Ground.add( MESH )
+
+            for ( let i = 0; i < count; i++ ) {
+
+                const POS_VEC = new THREE.Vector3(
+                    ( Math.random() * this.Proxy.chunkSize ) - halfSize, 
+                    0, 
+                    ( Math.random() * this.Proxy.chunkSize ) - halfSize 
+                )
+
+                Dummy.position.copy( POS_VEC )
+                Dummy.rotation.y = Utils.Math.random( -Math.PI, Math.PI )
+                Dummy.scale.setScalar( this.Proxy.chunkSize * 0.0025 )
+                Dummy.updateMatrix()
+
+                MESH.setMatrixAt( i, Dummy.matrix )
+    
+            }
+
+            MESH.instanceMatrix.needsUpdate = true
+
+            this.Trees.Meshes.push( MESH )
+
+        }
+
+    }
+
+    update () {
+
+        if ( this.Mesh.inFrustum ) {
+
+            if ( !this.inFrustum ) {
+
+                console.log( 'hide' )
+
+                for ( let m of this.Trees.Meshes ) m.visible = true
+
+                this.inFrustum = true
+
+            }
+
+        } else {
+
+            if ( this.inFrustum ) {
+
+                for ( let m of this.Trees.Meshes ) m.visible = false
+
+                this.inFrustum = false
+
+            }
+
+        }
+
+    }
+
 }
 
 class TerrainComponent extends ECSComponent {
@@ -49,23 +135,23 @@ class TerrainComponent extends ECSComponent {
 
         super( proxy )
 
-        this.chunkMeshes = []
-        this.chunkSegments = Utils.Script.checkParam( params, 'chunkSegments', 32 )
-        this.chunkSimplexAmp = Utils.Script.checkParam( params, 'chunkSimplexAmp', 0.75 )
+        this.chunkMeshes        = []
+        this.chunkSegments      = Utils.Script.checkParam( params, 'chunkSegments', 32 )
+        this.chunkSimplexAmp    = Utils.Script.checkParam( params, 'chunkSimplexAmp', 0.75 )
         this.chunkSimplexRangeX = Utils.Script.checkParam( params, 'chunkSimplexRangeX', 0.125 )
         this.chunkSimplexRangeY = Utils.Script.checkParam( params, 'chunkSimplexRangeY', 0.125 )
-        this.chunkSize = Utils.Script.checkParam( params, 'chunkSize', 1 )
-        this.chunks = []
-        this.chunksX = Utils.Script.checkParam( params, 'chunksX', 5 )
-        this.chunksXSize = this.chunksX * this.chunkSize
-        this.chunksY = Utils.Script.checkParam( params, 'chunksY', 5 )
-        this.chunksYSize = this.chunksY * this.chunkSize
-        this.flat = Utils.Script.checkParam( params, 'flat', false )
-        this.peakAmp = Utils.Script.checkParam( params, 'peakAmp', 0.05 )
-        this.peakStartHeight = Utils.Script.checkParam( params, 'peakStartHeight', 0.45 )
-        this.seaLevel = Utils.Script.checkParam( params, 'seaLevel', 0.5 )
-        this.underWaterOffset = Utils.Script.checkParam( params, 'underWaterOffset', 0.01 )
-        this.vertexColoring = Utils.Script.checkParam( params, 'vertexColoring', true )
+        this.chunkSize          = Utils.Script.checkParam( params, 'chunkSize', 1 )
+        this.chunks             = []
+        this.chunksX            = Utils.Script.checkParam( params, 'chunksX', 5 )
+        this.chunksXSize        = this.chunksX * this.chunkSize
+        this.chunksY            = Utils.Script.checkParam( params, 'chunksY', 5 )
+        this.chunksYSize        = this.chunksY * this.chunkSize
+        this.flat               = Utils.Script.checkParam( params, 'flat', false )
+        this.peakAmp            = Utils.Script.checkParam( params, 'peakAmp', 0.05 )
+        this.peakStartHeight    = Utils.Script.checkParam( params, 'peakStartHeight', 0.45 )
+        this.seaLevel           = Utils.Script.checkParam( params, 'seaLevel', 0.5 )
+        this.underWaterOffset   = Utils.Script.checkParam( params, 'underWaterOffset', 0.01 )
+        this.vertexColoring     = Utils.Script.checkParam( params, 'vertexColoring', true )
 
         this.Colors = {
             Mountain: [ 
@@ -188,6 +274,23 @@ class TerrainComponent extends ECSComponent {
         //             vec3 transformed = nVert.xyz;
 
         //         }
+
+    }
+
+    async buildModels ( renderer ) {
+
+        this.Models = {
+            Trees: [
+                await ENGINE.Managers.Models.load( `./public/models/birch-tree-green-0.gltf` ),
+                await ENGINE.Managers.Models.load( `./public/models/birch-tree-green-1.gltf` ),
+                await ENGINE.Managers.Models.load( `./public/models/birch-tree-orange-0.gltf` ),
+                await ENGINE.Managers.Models.load( `./public/models/birch-tree-orange-1.gltf` )
+            ]
+        }
+
+        this.PaletteMaterial = this.Models.Trees[ 0 ].scene.children[ 0 ].material
+
+        renderer.setupCSMMaterial( this.PaletteMaterial )
 
     }
 
@@ -332,6 +435,7 @@ class TerrainComponent extends ECSComponent {
 
     async generate ( renderer ) {
 
+        await this.buildModels( renderer )
         await this.buildGroups()
         await this.buildChunks()
         await this.calculateColors()
@@ -344,11 +448,20 @@ class TerrainComponent extends ECSComponent {
         return ( ( num - in_min ) * ( out_max - out_min ) ) / ( in_max - in_min ) + out_min
     
     }
-      
 
     updateAttr ( attr ) {
 
         attr.needsUpdate = true
+
+    }
+
+    onUpdate () {
+
+        for ( let m of this.chunks ) {
+
+            m.update()
+
+        }
 
     }
 
