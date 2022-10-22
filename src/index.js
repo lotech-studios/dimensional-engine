@@ -1,3 +1,4 @@
+export * as DB from './database'
 export * as ECS from './ecs'
 export * as Geometries from './geometries'
 export * as Three from 'three'

@@ -1,3 +1,4 @@
+import * as DB from '../database'
 import * as Utils from '../util'
 
 class Input {
@@ -110,6 +111,7 @@ class InputManager {
         } )
 
         window.DeviceInput = this
+        window.Keys = DB.Keys
 
     }
 

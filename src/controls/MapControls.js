@@ -7,6 +7,8 @@ import {
 	Vector2,
 	Vector3
 } from 'three'
+import * as DB from '../database'
+import * as THREE from 'three'
 
 // This set of controls performs orbiting, dollying (zooming), and panning.
 // Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
@@ -88,20 +90,21 @@ class MapControls extends EventDispatcher {
 		// Touch fingers
 		this.touches = { ONE: TOUCH.ROTATE, TWO: TOUCH.DOLLY_PAN }
 
-		// keys
-		this.keys = {
-			panDown: 's',
-			panLeft: 'a',
-			panRight: 'd',
-			panUp: 'w',
-			rotateLeft: 'q',
-			rotateRight: 'e',
+		this.Default = {
+			zoom: this.object.zoom,
+
+			Position: this.object.position.clone(),
+			Target:   this.target.clone(),
 		}
 
-		// for reset
-		this.target0 = this.target.clone()
-		this.position0 = this.object.position.clone()
-		this.zoom0 = this.object.zoom
+		this.Keys = {
+			panDown:     DB.Keys.S,
+			panLeft:     DB.Keys.A,
+			panRight:    DB.Keys.D,
+			panUp:       DB.Keys.W,
+			rotateLeft:  DB.Keys.Q,
+			rotateRight: DB.Keys.E,
+		}
 
 		//
 		// public methods
@@ -127,22 +130,22 @@ class MapControls extends EventDispatcher {
 
 		this.saveState = function () {
 
-			scope.target0.copy( scope.target )
-			scope.position0.copy( scope.object.position )
-			scope.zoom0 = scope.object.zoom
+			this.Default.Target.copy( this.target )
+			this.Default.Position.copy( this.object.position )
+			this.Default.zoom = this.object.zoom
 
 		}
 
 		this.reset = function () {
 
-			scope.target.copy( scope.target0 )
-			scope.object.position.copy( scope.position0 )
-			scope.object.zoom = scope.zoom0
+			this.target.copy( this.Default.Target )
+			this.object.position.copy( this.Default.Position )
+			this.object.zoom = this.Default.zoom
 
-			scope.object.updateProjectionMatrix()
-			scope.dispatchEvent( _changeEvent )
+			this.object.updateProjectionMatrix()
+			this.dispatchEvent( _changeEvent )
 
-			scope.update()
+			this.update()
 
 			state = STATE.NONE
 
@@ -151,29 +154,29 @@ class MapControls extends EventDispatcher {
 		// this method is exposed, but perhaps it would be better if we can make it private...
 		this.update = function () {
 
-			const offset = new Vector3()
+			const Offset = new THREE.Vector3()
 
 			// so camera.up is the orbit axis
-			const quat = new Quaternion().setFromUnitVectors( object.up, new Vector3( 0, 1, 0 ) )
-			const quatInverse = quat.clone().invert()
+			const Quat = new THREE.Quaternion().setFromUnitVectors( object.up, new THREE.Vector3( 0, 1, 0 ) )
+			const QuatInverse = Quat.clone().invert()
 
-			const lastPosition = new Vector3()
-			const lastQuaternion = new Quaternion()
+			const LastPosition = new THREE.Vector3()
+			const LastQuaternion = new THREE.Quaternion()
 
 			const twoPI = 2 * Math.PI
 
 			return function update () {
 
-				const position = scope.object.position
-				const keyPanSpeed = scope.keyPanSpeed * position.distanceTo( scope.target )
+				const Position = scope.object.position
+				const keyPanSpeed = scope.keyPanSpeed * scope.getDistance()
 
-				offset.copy( position ).sub( scope.target )
+				Offset.copy( Position ).sub( scope.target )
 
 				// rotate offset to "y-axis-is-up" space
-				offset.applyQuaternion( quat )
+				Offset.applyQuaternion( Quat )
 
 				// angle from z-axis around y-axis
-				spherical.setFromVector3( offset )
+				spherical.setFromVector3( Offset )
 
 				if ( scope.autoRotate && state === STATE.NONE ) {
 
@@ -201,37 +204,37 @@ class MapControls extends EventDispatcher {
 
 				// detect key presses
 
-				if ( DeviceInput.getKey( scope.keys.panUp ) ) {
+				if ( DeviceInput.getKey( scope.Keys.panUp ) ) {
 
-					scope.panUp( keyPanSpeed, scope.object.matrix )
-
-				}
-
-				if ( DeviceInput.getKey( scope.keys.panDown ) ) {
-
-					scope.panUp( -keyPanSpeed, scope.object.matrix )
+					panUp( keyPanSpeed, scope.object.matrix )
 
 				}
 
-				if ( DeviceInput.getKey( scope.keys.panLeft ) ) {
+				if ( DeviceInput.getKey( scope.Keys.panDown ) ) {
 
-					scope.panLeft( keyPanSpeed, scope.object.matrix )
-
-				}
-
-				if ( DeviceInput.getKey( scope.keys.panRight ) ) {
-
-					scope.panLeft( -keyPanSpeed, scope.object.matrix )
+					panUp( -keyPanSpeed, scope.object.matrix )
 
 				}
 
-				if ( DeviceInput.getKey( scope.keys.rotateLeft ) ) {
+				if ( DeviceInput.getKey( scope.Keys.panLeft ) ) {
+
+					panLeft( keyPanSpeed, scope.object.matrix )
+
+				}
+
+				if ( DeviceInput.getKey( scope.Keys.panRight ) ) {
+
+					panLeft( -keyPanSpeed, scope.object.matrix )
+
+				}
+
+				if ( DeviceInput.getKey( scope.Keys.rotateLeft ) ) {
 
 					rotateLeft( keyPanSpeed, scope.object.matrix )
 
 				}
 
-				if ( DeviceInput.getKey( scope.keys.rotateRight ) ) {
+				if ( DeviceInput.getKey( scope.Keys.rotateRight ) ) {
 
 					rotateLeft( -keyPanSpeed, scope.object.matrix )
 
@@ -285,12 +288,12 @@ class MapControls extends EventDispatcher {
 
 				}
 
-				offset.setFromSpherical( spherical )
+				Offset.setFromSpherical( spherical )
 
 				// rotate offset back to "camera-up-vector-is-up" space
-				offset.applyQuaternion( quatInverse )
+				Offset.applyQuaternion( QuatInverse )
 
-				position.copy( scope.target ).add( offset )
+				Position.copy( scope.target ).add( Offset )
 
 				scope.object.lookAt( scope.target )
 
@@ -315,14 +318,17 @@ class MapControls extends EventDispatcher {
 				// min(camera displacement, camera rotation in radians)^2 > EPS
 				// using small-angle approximation cos(x/2) = 1 - x^2 / 8
 
-				if ( zoomChanged ||
-					lastPosition.distanceToSquared( scope.object.position ) > EPS ||
-					8 * ( 1 - lastQuaternion.dot( scope.object.quaternion ) ) > EPS ) {
+				if ( 
+					zoomChanged ||
+					LastPosition.distanceToSquared( scope.object.position ) > EPS ||
+					8 * ( 1 - LastQuaternion.dot( scope.object.quaternion ) ) > EPS 
+				) {
 
 					scope.dispatchEvent( _changeEvent )
 
-					lastPosition.copy( scope.object.position )
-					lastQuaternion.copy( scope.object.quaternion )
+					LastPosition.copy( scope.object.position )
+					LastQuaternion.copy( scope.object.quaternion )
+					
 					zoomChanged = false
 
 					return true

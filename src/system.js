@@ -1,4 +1,4 @@
-
+import * as DB from './database'
 import * as THREE from 'three'
 import * as ECS from './ecs'
 import * as Utils from './util'
