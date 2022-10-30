@@ -50,7 +50,7 @@ class TerrainChunk {
 
     buildTrees ( x, y ) {
 
-        let count = 5
+        let count = 20 / this.Proxy.Models.Trees.length
         let halfSize = this.Proxy.chunkSize / 2
         let quarterSize = this.Proxy.chunkSize / 4
 
@@ -282,9 +282,9 @@ class TerrainComponent extends ECSComponent {
         this.Models = {
             Trees: [
                 await ENGINE.Managers.Models.load( `./public/models/birch-tree-green-0.gltf` ),
-                await ENGINE.Managers.Models.load( `./public/models/birch-tree-green-1.gltf` ),
+                // await ENGINE.Managers.Models.load( `./public/models/birch-tree-green-1.gltf` ),
                 await ENGINE.Managers.Models.load( `./public/models/birch-tree-orange-0.gltf` ),
-                await ENGINE.Managers.Models.load( `./public/models/birch-tree-orange-1.gltf` )
+                // await ENGINE.Managers.Models.load( `./public/models/birch-tree-orange-1.gltf` )
             ]
         }
 

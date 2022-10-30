@@ -89,7 +89,8 @@ ENGINE.onLoaded = async () => {
         ENGINE.Managers.Camera.get( 'Main' ),
         {
             csmEnabled: true,
-            postProcessing: true,
+            csmCascades: 4,
+            postProcessing: false,
         }
 
     )

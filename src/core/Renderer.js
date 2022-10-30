@@ -2,7 +2,7 @@ import * as Constants from './constants.js'
 import * as PostProcessing from '../postprocessing'
 import * as THREE from 'three'
 import * as Utils from '../util'
-import CSM from 'three-csm/src/CSM.js'
+import { CSM } from 'three/examples/jsm/csm/CSM.js'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { GammaCorrectionShader } from 'three/examples/jsm/shaders/GammaCorrectionShader.js'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
@@ -45,15 +45,16 @@ class Renderer {
             CSM: {
                 enabled: Utils.Script.checkParam( params, 'csmEnabled', true ),
 
-                cascades:       Utils.Script.checkParam( params, 'csmCascades', 3 ),
-                fade:           Utils.Script.checkParam( params, 'csmFades', true ),
-                lightDirection: Utils.Script.checkParam( params, 'csmLightDirection', new THREE.Vector3( 1, -1, 1 ).normalize() ),
-                lightFar:       Utils.Script.checkParam( params, 'csmLightFar', 600 ),
-	            lightNear:      Utils.Script.checkParam( params, 'csmLightNear', 0.1 ),
-                maxFar:         Utils.Script.checkParam( params, 'csmMaxFar', 10 ),
-	            shadowBias:     Utils.Script.checkParam( params, 'csmShadowBias', 0 ),
-                shadowMapSize:  Utils.Script.checkParam( params, 'csmShadowMapSize', 2048 ),
-                splitsCallback: Utils.Script.checkParam( params, 'csmSplitsCallback', Constants.CSM_SPLITS_CALLBACK ),
+                cascades:        Utils.Script.checkParam( params, 'csmCascades', 3 ),
+                fade:            Utils.Script.checkParam( params, 'csmFades', true ),
+                lightDirection:  Utils.Script.checkParam( params, 'csmLightDirection', new THREE.Vector3( 1, -1, 1 ).normalize() ),
+                lightFar:        Utils.Script.checkParam( params, 'csmLightFar', 600 ),
+	            lightNear:       Utils.Script.checkParam( params, 'csmLightNear', 0.1 ),
+                maxFar:          Utils.Script.checkParam( params, 'csmMaxFar', 10 ),
+	            shadowBias:      Utils.Script.checkParam( params, 'csmShadowBias', 0 ),
+                shadowMapSize:   Utils.Script.checkParam( params, 'csmShadowMapSize', 2048 ),
+                splitsCallback:  Utils.Script.checkParam( params, 'csmSplitsCallback', Constants.CSM_SPLITS_CALLBACK ),
+                updateEachFrame: Utils.Script.checkParam( params, 'csmUpdateEachFrame', true )
             }
         }
 
@@ -141,6 +142,8 @@ class Renderer {
 
         Renderer.prototype.$num++
 
+        this.csmUpdated = false
+
     }
 
    async addDepthBasedMesh ( mesh ) {
@@ -175,7 +178,7 @@ class Renderer {
 
     render ( deltaTime ) {
 
-        if ( this.Settings.CSM.enabled ) this.CSM.update( this.Camera.matrix )
+        this.updateCSM()
 
         if ( this.Settings.postProcessing ) this.Composer.render( deltaTime )
         else this.Renderer.render( this.Scene, this.Camera )
@@ -225,6 +228,30 @@ class Renderer {
 
         this.Camera.aspect = SIZEX / SIZEY
         this.Camera.updateProjectionMatrix()
+
+    }
+
+    updateCSM () {
+
+        if ( this.Settings.CSM.enabled ) {
+
+            if ( this.Settings.CSM.updateEachFrame ) {
+
+                this.CSM.update( this.Camera.matrix )
+    
+            } else {
+    
+                if ( !this.csmUpdated ) {
+    
+                    this.CSM.update( this.Camera.matrix )
+    
+                    this.csmUpdated = true
+    
+                }
+    
+            }
+
+        }
 
     }
 
