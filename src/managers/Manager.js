@@ -1,10 +1,8 @@
-import * as Utils from '../util'
-
 class Manager {
 
-    constructor () {
+    constructor ( engine ) {
 
-        this.Storage = Utils.Script.createStorageTable()
+        this.Engine  = engine
 
     }
 

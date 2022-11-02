@@ -1,3 +1,4 @@
+export * as Cannon from 'cannon-es'
 export * as DB from './database'
 export * as ECS from './ecs'
 export * as Geometries from './geometries'

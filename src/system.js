@@ -25,6 +25,7 @@ class EngineSystem {
         this.Settings = {
             animUpdateInterval: Utils.Script.checkParam( params, 'animUpdateInterval', 60 ),
             devToolsShowing: Utils.Script.checkParam( params, 'devToolsShowing', false ),
+            physicsEnabled: Utils.Script.checkParam( params, 'physicsEnabled', true )
         }
 
         this.Time = {
@@ -35,9 +36,9 @@ class EngineSystem {
 
         // Defines etc.
 
-        this.Three = THREE
-
         this.ECS = ECS
+        this.Three = THREE
+        this.Utils = Utils
 
         this.Managers = {
             Camera: new Managers.CameraManager( this ),
@@ -46,6 +47,7 @@ class EngineSystem {
             Interface: new Managers.InterfaceManager(),
             Materials: new Managers.MaterialManager( this ),
             Models: new Managers.ModelManager( this ),
+            Physics: new Managers.PhysicsManager( this ),
             Renderer: new Managers.RendererManager( this ),
             Scene: new Managers.SceneManager( this ),
             Textures: new Managers.TextureManager( this ),
@@ -57,7 +59,6 @@ class EngineSystem {
         }
 
         this.Input = this.Managers.Input
-        this.Utils = Utils
 
         // Render method
 
@@ -152,6 +153,16 @@ class EngineSystem {
 
     async start () {
 
+        // check if physics is enabled for this instance
+
+        if ( this.Settings.physicsEnabled ) {
+
+            await this.Managers.Physics.init()
+
+        }
+
+        // load everything in order after dependencies are checked
+
         await this.onBeforeLoad( this )
 
         await this.Managers.Textures.loadStartBatch()
@@ -159,6 +170,8 @@ class EngineSystem {
 
         await this.buildEvents()
         await this.onLoaded( this )
+
+        //
 
         this.render()
 
